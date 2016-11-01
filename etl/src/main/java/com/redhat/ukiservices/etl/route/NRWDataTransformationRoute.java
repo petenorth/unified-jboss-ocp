@@ -22,7 +22,12 @@ public class NRWDataTransformationRoute extends RouteBuilder {
 
 		this.getContext().setStreamCaching(true);
 		
-		from("amq:queue:ingestdata").log("${body}");
+		onException(Exception.class).log("Exception caught during transformation. Is the message the right format?");
+		
+		from("amq:queue:ingestdata")
+			.unmarshal()
+			.jaxb("com.redhat.ukiservices.etl.model")
+			.log("${body}");
 
 	}
 
