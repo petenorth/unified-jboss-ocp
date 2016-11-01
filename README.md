@@ -3,9 +3,25 @@ An demo project using multiple JBoss Middleware components inside OpenShift Cont
 
 # ingest
 
-Data ingestion from A.N.Other source
+## Components
+* Red Hat JBoss Fuse Integration Services
+* Red Hat JBoss A-MQ
+
+## Description
+Ingest data from Network Rail's Darwin Push Port, documented here:
+
+http://nrodwiki.rockshore.net/index.php/Darwin:Push_Port
+
+This provides regular flow of xml formatted data. The data uncompressed and added to JBoss A-MQ
 
 # etl
+
+## Components
+* Red Hat JBoss A-MQ
+* Red Hat JBoss Fuse Integration Services
+* Red Hat JBoss Data Grid
+
+## Description
 
 Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG
 
