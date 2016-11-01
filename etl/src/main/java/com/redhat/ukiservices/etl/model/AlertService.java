@@ -14,29 +14,28 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * Train Status. Update to the "real time" forecast data for a service.
+ * TODO
  * 
- * <p>Java class for TS complex type.
+ * <p>Java class for AlertService complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TS">
+ * &lt;complexType name="AlertService">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="LateReason" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}DisruptionReasonType" minOccurs="0"/>
- *         &lt;element name="Location" type="{http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2}TSLocation" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="Location" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *       &lt;/sequence>
- *       &lt;attribute name="rid" use="required" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}RIDType" />
- *       &lt;attribute name="uid" use="required" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}UIDType" />
- *       &lt;attribute name="ssd" use="required" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}RTTIDateType" />
- *       &lt;attribute name="isReverseFormation" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       &lt;attribute name="RID" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}RIDType" />
+ *       &lt;attribute name="UID" type="{http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1}UIDType" />
+ *       &lt;attribute name="SSD" type="{http://www.w3.org/2001/XMLSchema}date" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -45,48 +44,20 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TS", namespace = "http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2", propOrder = {
-    "lateReason",
+@XmlType(name = "AlertService", namespace = "http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1", propOrder = {
     "location"
 })
-public class TS {
+public class AlertService {
 
-    @XmlElement(name = "LateReason")
-    protected DisruptionReasonType lateReason;
-    @XmlElement(name = "Location")
-    protected List<TSLocation> location;
-    @XmlAttribute(name = "rid", required = true)
+    @XmlElement(name = "Location", required = true)
+    protected List<String> location;
+    @XmlAttribute(name = "RID")
     protected String rid;
-    @XmlAttribute(name = "uid", required = true)
+    @XmlAttribute(name = "UID")
     protected String uid;
-    @XmlAttribute(name = "ssd", required = true)
+    @XmlAttribute(name = "SSD")
+    @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar ssd;
-    @XmlAttribute(name = "isReverseFormation")
-    protected Boolean isReverseFormation;
-
-    /**
-     * Gets the value of the lateReason property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DisruptionReasonType }
-     *     
-     */
-    public DisruptionReasonType getLateReason() {
-        return lateReason;
-    }
-
-    /**
-     * Sets the value of the lateReason property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DisruptionReasonType }
-     *     
-     */
-    public void setLateReason(DisruptionReasonType value) {
-        this.lateReason = value;
-    }
 
     /**
      * Gets the value of the location property.
@@ -106,13 +77,13 @@ public class TS {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link TSLocation }
+     * {@link String }
      * 
      * 
      */
-    public List<TSLocation> getLocation() {
+    public List<String> getLocation() {
         if (location == null) {
-            location = new ArrayList<TSLocation>();
+            location = new ArrayList<String>();
         }
         return this.location;
     }
@@ -125,7 +96,7 @@ public class TS {
      *     {@link String }
      *     
      */
-    public String getRid() {
+    public String getRID() {
         return rid;
     }
 
@@ -137,7 +108,7 @@ public class TS {
      *     {@link String }
      *     
      */
-    public void setRid(String value) {
+    public void setRID(String value) {
         this.rid = value;
     }
 
@@ -149,7 +120,7 @@ public class TS {
      *     {@link String }
      *     
      */
-    public String getUid() {
+    public String getUID() {
         return uid;
     }
 
@@ -161,7 +132,7 @@ public class TS {
      *     {@link String }
      *     
      */
-    public void setUid(String value) {
+    public void setUID(String value) {
         this.uid = value;
     }
 
@@ -173,7 +144,7 @@ public class TS {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public XMLGregorianCalendar getSsd() {
+    public XMLGregorianCalendar getSSD() {
         return ssd;
     }
 
@@ -185,36 +156,8 @@ public class TS {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setSsd(XMLGregorianCalendar value) {
+    public void setSSD(XMLGregorianCalendar value) {
         this.ssd = value;
-    }
-
-    /**
-     * Gets the value of the isReverseFormation property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isIsReverseFormation() {
-        if (isReverseFormation == null) {
-            return false;
-        } else {
-            return isReverseFormation;
-        }
-    }
-
-    /**
-     * Sets the value of the isReverseFormation property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsReverseFormation(Boolean value) {
-        this.isReverseFormation = value;
     }
 
 }

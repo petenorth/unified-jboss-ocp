@@ -1,6 +1,7 @@
 package com.redhat.ukiservices.etl.route;
 
 import javax.inject.Inject;
+import javax.xml.bind.UnmarshalException;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
@@ -10,7 +11,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import io.fabric8.annotations.Alias;
 import io.fabric8.annotations.ServiceName;
 
-@ContextName("IngestContext")
+@ContextName("ETLContext")
 public class NRWDataTransformationRoute extends RouteBuilder {
 
 	@Inject
@@ -26,7 +27,7 @@ public class NRWDataTransformationRoute extends RouteBuilder {
 		jaxbDataFormat.setContextPath("com.redhat.ukiservices.etl.model");
 		jaxbDataFormat.setMustBeJAXBElement(false);
 		
-		onException(Exception.class).log("Exception caught during transformation. Is the message the right format?");
+		onException(UnmarshalException.class).log("Exception caught during transformation. Is the message the right format?");
 		
 		from("amq:queue:ingestdata")
 			.unmarshal(jaxbDataFormat)

@@ -10,7 +10,6 @@
 	19/06/2014  	Version 1:
 						Separated out to multiple schema.
 	-->
-	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
 	<!-- Simple Types -->
 	<!-- Complex Types -->
 	<xs:complexType name="TrainOrderItem">
