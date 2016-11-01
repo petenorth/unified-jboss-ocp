@@ -16,6 +16,13 @@ This provides regular flow of xml formatted data. The data uncompressed and adde
 
 # etl
 
+## Components
+* Red Hat JBoss A-MQ
+* Red Hat JBoss Fuse Integration Services
+* Red Hat JBoss Data Grid
+
+## Description
+
 Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG
 
 # web
