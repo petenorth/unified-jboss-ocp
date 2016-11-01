@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
 
 import io.fabric8.annotations.Alias;
 import io.fabric8.annotations.ServiceName;
@@ -21,12 +22,14 @@ public class NRWDataTransformationRoute extends RouteBuilder {
 	public void configure() throws Exception {
 
 		this.getContext().setStreamCaching(true);
+		JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
+		jaxbDataFormat.setContextPath("com.redhat.ukiservices.etl.model");
+		jaxbDataFormat.setMustBeJAXBElement(false);
 		
 		onException(Exception.class).log("Exception caught during transformation. Is the message the right format?");
 		
 		from("amq:queue:ingestdata")
-			.unmarshal()
-			.jaxb("com.redhat.ukiservices.etl.model")
+			.unmarshal(jaxbDataFormat)
 			.log("${body}");
 
 	}
