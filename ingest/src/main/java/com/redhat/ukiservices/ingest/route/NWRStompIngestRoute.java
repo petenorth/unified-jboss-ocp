@@ -2,6 +2,7 @@ package com.redhat.ukiservices.ingest.route;
 
 import javax.inject.Inject;
 
+import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
@@ -31,14 +32,14 @@ public class NWRStompIngestRoute extends RouteBuilder {
 	@Inject
 	@ServiceName("broker-amq-tcp")
 	@Alias("amq")
-	private String amqBroker;
+	private ActiveMQComponent activeMQComponent;
 
 	@Override
 	public void configure() throws Exception {
 
 		this.getContext().setStreamCaching(false);
 
-		from(createStompConsumer()).id("ingestRoute").processRef("nwrDataFeedProcessor").to("amq:queue:ingestdata");
+		from(createStompConsumer()).id("ingestRoute").processRef("nwrDataFeedProcessor").inOnly("amq:queue:ingestdata");
 
 	}
 
