@@ -37,7 +37,7 @@ public class NWRStompIngestRoute extends RouteBuilder {
 	@Override
 	public void configure() throws Exception {
 
-		this.getContext().setStreamCaching(false);
+		this.getContext().setStreamCaching(true);
 
 		from(createStompConsumer()).id("ingestRoute").processRef("nwrDataFeedProcessor").inOnly("amq:queue:ingestdata");
 
