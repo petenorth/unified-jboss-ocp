@@ -270,7 +270,7 @@
 					<packageName>com.redhat.ukiservices.etl.model</packageName>
 					<clearOutputDir>true</clearOutputDir>
 					<sources>
-						<source>src/main/resources/schemas/RttiPPTSchema_v12.xsd</source>
+						<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
 					</sources>
 					<laxSchemaValidation>true</laxSchemaValidation>
 				</configuration>
