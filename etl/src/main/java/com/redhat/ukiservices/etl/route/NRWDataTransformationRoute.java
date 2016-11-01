@@ -11,7 +11,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import io.fabric8.annotations.Alias;
 import io.fabric8.annotations.ServiceName;
 
-@ContextName("ETLContext")
+@ContextName("etlContext")
 public class NRWDataTransformationRoute extends RouteBuilder {
 
 	@Inject
@@ -26,12 +26,13 @@ public class NRWDataTransformationRoute extends RouteBuilder {
 		JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
 		jaxbDataFormat.setContextPath("com.redhat.ukiservices.etl.model");
 		jaxbDataFormat.setMustBeJAXBElement(false);
-		
-		onException(UnmarshalException.class).log("Exception caught during transformation. Is the message the right format?");
-		
+
+		onException(UnmarshalException.class)
+				.log("Exception caught during transformation. Is the message the right format?");
+
 		from("amq:queue:ingestdata")
-			.unmarshal(jaxbDataFormat)
-			.log("${body}");
+		.unmarshal(jaxbDataFormat)
+		.log("${body}");
 
 	}
 

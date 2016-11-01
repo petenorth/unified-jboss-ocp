@@ -252,7 +252,7 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-		<!-- 
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -267,12 +267,14 @@
 				</executions>
 				<configuration>
 					<packageName>com.redhat.ukiservices.etl.model</packageName>
+					<clearOutputDir>true</clearOutputDir>
 					<sources>
-						<source>src/main/resources/schemas/rttiPPTForecasts_v2.xsd</source>
+						<source>src/main/resources/schemas/RttiPPTSchema_v12.xsd</source>
 					</sources>
+					<laxSchemaValidation>true</laxSchemaValidation>
 				</configuration>
-			</plugin>	
-		-->
+			</plugin>
+
 
 			<!-- Compiler plugin enforces Java 1.8 compatibility and activates annotation 
 				processors -->
