@@ -4,10 +4,8 @@ import javax.inject.Inject;
 import javax.xml.bind.UnmarshalException;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.cdi.Uri;
 
 import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.factory.DataFormatFactory;
@@ -24,10 +22,6 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 	@ServiceName("broker-amq-tcp")
 	@Alias("amq")
 	private ActiveMQComponent activeMQComponent;
-//
-//	@Inject
-//	@Uri("infinispan://datagrid-app")
-//	private Endpoint datagridService;
 
 	@Inject
 	protected DataFormatFactory dataFormatFactory;
