@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Pport ts="2016-11-01T22:21:41.739658Z" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" xmlns:ns3="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" xmlns:ns4="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" xmlns:ns5="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" xmlns:ns6="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" xmlns:ns7="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" xmlns:ns8="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" xmlns:ns9="http://thalesgroup.com/RTTI/PushPortStatus/root_1">
+	<uR requestID="0000000000008632" requestSource="at02" updateOrigin="CIS">
+		<TS rid="201611018063143" ssd="2016-11-01" uid="P63143">
+			<ns3:Location ptd="22:39" tpl="BHAMNWS" wtd="22:39">
+				<ns3:dep et="22:39" src="TD"/>
+				<ns3:plat conf="true" platsrc="A">4C</ns3:plat>
+			</ns3:Location>
+		</TS>
+	</uR>
+</Pport>

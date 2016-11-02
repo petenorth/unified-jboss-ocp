@@ -39,7 +39,10 @@ public class NWRStompIngestRoute extends RouteBuilder {
 
 		this.getContext().setStreamCaching(true);
 
-		from(createStompConsumer()).id("ingestRoute").processRef("nwrDataFeedProcessor").inOnly("amq:queue:ingestdata");
+		from(createStompConsumer())
+			.id("ingestRoute")
+			.processRef("nwrDataFeedProcessor")
+			.inOnly("amq:queue:ingestdata");
 
 	}
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Pport ts="2016-11-02T15:36:19.125361Z" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" xmlns:ns3="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" xmlns:ns4="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" xmlns:ns5="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" xmlns:ns6="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" xmlns:ns7="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" xmlns:ns8="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" xmlns:ns9="http://thalesgroup.com/RTTI/PushPortStatus/root_1">
+    <uR updateOrigin="Workstation">
+        <OW cat="Train" id="60862" sev="1">
+            <ns4:Station crs="BTG"/>
+            <ns4:Station crs="GMV"/>
+            <ns4:Station crs="LTV"/>
+            <ns4:Station crs="NOT"/>
+            <ns4:Station crs="LIC"/>
+            <ns4:Station crs="LOB"/>
+            <ns4:Station crs="AST"/>
+            <ns4:Station crs="ALV"/>
+            <ns4:Station crs="CRD"/>
+            <ns4:Station crs="DBY"/>
+            <ns4:Station crs="CDF"/>
+            <ns4:Station crs="CDT"/>
+            <ns4:Station crs="BUT"/>
+            <ns4:Station crs="BEE"/>
+            <ns4:Station crs="BKT"/>
+            <ns4:Station crs="CWL"/>
+            <ns4:Station crs="LED"/>
+            <ns4:Station crs="FOK"/>
+            <ns4:Station crs="BMV"/>
+            <ns4:Station crs="SPO"/>
+            <ns4:Station crs="SLY"/>
+            <ns4:Station crs="SUT"/>
+            <ns4:Station crs="HFD"/>
+            <ns4:Station crs="CNM"/>
+            <ns4:Station crs="ATB"/>
+            <ns4:Station crs="BRV"/>
+            <ns4:Station crs="KNN"/>
+            <ns4:Station crs="RDC"/>
+            <ns4:Station crs="WYL"/>
+            <ns4:Station crs="LGE"/>
+            <ns4:Station crs="LYD"/>
+            <ns4:Station crs="TAM"/>
+            <ns4:Station crs="BUL"/>
+            <ns4:Station crs="NFD"/>
+            <ns4:Station crs="UNI"/>
+            <ns4:Station crs="GCR"/>
+            <ns4:Station crs="ASC"/>
+            <ns4:Station crs="STJ"/>
+            <ns4:Station crs="BHM"/>
+            <ns4:Station crs="CPW"/>
+            <ns4:Station crs="NWP"/>
+            <ns4:Station crs="FWY"/>
+            <ns4:Station crs="MVL"/>
+            <ns4:Station crs="ERD"/>
+            <ns4:Station crs="DTW"/>
+            <ns4:Station crs="WOS"/>
+            <ns4:Station crs="GVH"/>
+            <ns4:Msg>Trains between Longbridge and Birmingham New Street are being disrupted. More details can be found in 
+                
+                
+                <ns4:a href="http://nationalrail.co.uk/service_disruptions/150149.aspx">Latest Travel News.</ns4:a></ns4:Msg>
+        </OW>
+    </uR>
+</Pport>

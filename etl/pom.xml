@@ -19,6 +19,8 @@
 		<fuse.version>6.2.1.redhat-084</fuse.version>
 		<fabric8.version>2.2.0.redhat-079</fabric8.version>
 		<docker.maven.plugin.version>0.13.6</docker.maven.plugin.version>
+		<datagrid.version>6.5.0.Final-redhat-5</datagrid.version>
+		<cache-api.version>1.0.0.redhat-1</cache-api.version>
 	</properties>
 
 	<repositories>
@@ -169,6 +171,26 @@
 			<artifactId>camel-cdi</artifactId>
 		</dependency>
 
+
+
+		<!-- JBoss Data Grid Component -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jbossdatagrid</artifactId>
+			<version>${datagrid.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+			<version>${cache-api.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
 		<!-- cdi api -->
 		<dependency>
 			<groupId>javax.enterprise</groupId>
@@ -207,6 +229,12 @@
 
 		<!-- testing -->
 		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -236,47 +264,7 @@
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
-
-		<pluginManagement>
-			<plugins>
-				<!-- If we e.g. execute on JDK 1.8, we should compile for Java 8 to get 
-					the same (or higher) JAXB API version as used during the xjc execution. -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		
 		<plugins>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<id>xjc</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<packageName>com.redhat.ukiservices.etl.model</packageName>
-					<clearOutputDir>true</clearOutputDir>
-					<sources>
-						<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
-					</sources>
-					<laxSchemaValidation>true</laxSchemaValidation>
-				</configuration>
-			</plugin>
-
-
 			<!-- Compiler plugin enforces Java 1.8 compatibility and activates annotation 
 				processors -->
 			<plugin>
@@ -381,28 +369,49 @@
 		individual goal usage please consult the fabric8 documentation -->
 	<profiles>
 		<profile>
-			<id>f8-build</id>
+			<id>generate-jaxb</id>
 			<build>
-				<defaultGoal>clean install docker:build fabric8:json</defaultGoal>
-			</build>
-		</profile>
-		<profile>
-			<id>f8-deploy</id>
-			<properties>
-				<fabric8.imagePullPolicySnapshot>Always</fabric8.imagePullPolicySnapshot>
-				<fabric8.recreate>true</fabric8.recreate>
-			</properties>
-			<build>
-				<defaultGoal>clean install docker:build docker:push fabric8:json fabric8:apply</defaultGoal>
-			</build>
-		</profile>
-		<profile>
-			<id>f8-local-deploy</id>
-			<properties>
-				<fabric8.recreate>true</fabric8.recreate>
-			</properties>
-			<build>
-				<defaultGoal>clean install docker:build fabric8:json fabric8:apply</defaultGoal>
+				<defaultGoal>clean compile</defaultGoal>
+
+				<pluginManagement>
+					<plugins>
+						<!-- If we e.g. execute on JDK 1.8, we should compile for Java 8 to 
+							get the same (or higher) JAXB API version as used during the xjc execution. -->
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-compiler-plugin</artifactId>
+							<configuration>
+								<source>1.8</source>
+								<target>1.8</target>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+
+				<plugins>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jaxb2-maven-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<id>xjc</id>
+								<goals>
+									<goal>xjc</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<packageName>com.redhat.ukiservices.etl.model</packageName>
+							<clearOutputDir>true</clearOutputDir>
+							<sources>
+								<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
+							</sources>
+							<laxSchemaValidation>true</laxSchemaValidation>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>

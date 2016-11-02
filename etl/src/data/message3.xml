@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Pport ts="2016-11-01T22:21:31.0381952Z" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" xmlns:ns3="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" xmlns:ns4="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" xmlns:ns5="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" xmlns:ns6="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" xmlns:ns7="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" xmlns:ns8="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" xmlns:ns9="http://thalesgroup.com/RTTI/PushPortStatus/root_1">
+    <uR updateOrigin="TD">
+        <TS rid="201611018982429" ssd="2016-11-01" uid="Y82429">
+            <ns3:LateReason>120</ns3:LateReason>
+            <ns3:Location pta="22:05" ptd="22:05" tpl="RUNCORN" wta="22:04:30" wtd="22:06">
+                <ns3:arr at="22:19" src="TD"/>
+                <ns3:dep at="22:21" src="TD"/>
+                <ns3:plat>2</ns3:plat>
+            </ns3:Location>
+        </TS>
+    </uR>
+</Pport>
