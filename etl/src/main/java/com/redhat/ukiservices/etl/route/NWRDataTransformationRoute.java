@@ -24,10 +24,10 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 	@ServiceName("broker-amq-tcp")
 	@Alias("amq")
 	private ActiveMQComponent activeMQComponent;
-
-	@Inject
-	@Uri("infinispan://datagrid-app")
-	private Endpoint datagridService;
+//
+//	@Inject
+//	@Uri("infinispan://datagrid-app")
+//	private Endpoint datagridService;
 
 	@Inject
 	protected DataFormatFactory dataFormatFactory;
@@ -46,10 +46,10 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 			.choice()
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
 				.log("Received a TrainStatus object")
-				.to(datagridService)
+				//.to(datagridService)
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
-				.log("Received a StationMessage object")
-				.to(datagridService);
+				.log("Received a StationMessage object");
+				//.to(datagridService);
 
 
 	}
