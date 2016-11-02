@@ -8,7 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.redhat.ukiservices.etl.factory.DataFormatFactory;
-import com.redhat.ukiservices.etl.process.DataGridPreProcessor;
 
 public class NWRDataTransformationRouteTest extends CamelTestSupport {
 
@@ -25,7 +24,6 @@ public class NWRDataTransformationRouteTest extends CamelTestSupport {
 		JndiRegistry jndi = super.createRegistry();
 
 		jndi.bind("dataFormatFactory", new DataFormatFactory());
-		jndi.bind("datagridPreProcessor", new DataGridPreProcessor());
 
 		return jndi;
 	}
