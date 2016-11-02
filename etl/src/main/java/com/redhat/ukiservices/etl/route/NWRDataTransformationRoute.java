@@ -33,17 +33,14 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 				.log("Exception caught during transformation. Is the message the right format?");
 
 		from("amq:queue:ingestdata")
-		//from("file:src/data")
 			.id("etlRoute")
 			.unmarshal(dataFormatFactory.getJaxbDataFormat(JAXB_MODEL_CONTEXTPATH))
 			.split().method("pPortDataResponseSplitter", "splitDataResponse")
 			.choice()
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
 				.log("Received a TrainStatus object")
-				//.to(datagridService)
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
 				.log("Received a StationMessage object");
-				//.to(datagridService);
 
 
 	}

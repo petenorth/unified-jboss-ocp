@@ -173,7 +173,7 @@
 
 
 
-		<!-- JBoss Data Grid Component -->
+		<!-- JBoss Data Grid Component 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jbossdatagrid</artifactId>
@@ -190,7 +190,8 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-
+		-->
+		
 		<!-- cdi api -->
 		<dependency>
 			<groupId>javax.enterprise</groupId>

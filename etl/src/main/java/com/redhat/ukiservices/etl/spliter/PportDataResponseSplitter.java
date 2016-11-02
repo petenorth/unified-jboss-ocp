@@ -9,7 +9,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.camel.Message;
-import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.impl.DefaultMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +23,9 @@ import com.redhat.ukiservices.etl.model.TS;
 @Named("pPortDataResponseSplitter")
 public class PportDataResponseSplitter {
 
+	private static final String PAYLOAD_LOG_MESSAGE = "Added %s paylod for id: %s";
+	private static final Logger LOG = LoggerFactory.getLogger(PportDataResponseSplitter.class);
+
 	/**
 	 * Custom split which removes the objects in the pport we're interested in,
 	 * and generates new messages from thos objects
@@ -33,8 +35,6 @@ public class PportDataResponseSplitter {
 	 * @return a list of messages
 	 */
 	public List<Message> splitDataResponse(Message old) {
-
-		final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 		List<Message> dataResponses = new ArrayList<>();
 
@@ -48,10 +48,9 @@ public class PportDataResponseSplitter {
 				for (TS ts : ur.getTS()) {
 					Map<String, Object> headers = new HashMap<>();
 					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_TS);
-					headers.put(InfinispanConstants.KEY, ts.getUid());
 
 					dataResponses.add(createMessage(ts, headers));
-					LOG.info("Added TS Payload");
+					LOG.info(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_TS, ts.getUid()));
 				}
 			}
 
@@ -60,10 +59,10 @@ public class PportDataResponseSplitter {
 				for (StationMessage ow : ur.getOW()) {
 					Map<String, Object> headers = new HashMap<>();
 					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_OW);
-					headers.put(InfinispanConstants.KEY, ow.getId());
 
 					dataResponses.add(createMessage(ow, headers));
-					LOG.info("Added StationMessage Payload");
+					LOG.info(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_OW,
+							String.valueOf(ow.getId())));
 				}
 			}
 		}
