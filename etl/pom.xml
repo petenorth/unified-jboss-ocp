@@ -180,7 +180,7 @@
 				<!-- Exclude the bloody stupid super jar. This prevents Weld issues at context startup -->
 				<exclusion>
 					<groupId>org.infinispan</groupId>
-					<artifactId>infinispan-embedded</artifact>
+					<artifactId>infinispan-embedded</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
