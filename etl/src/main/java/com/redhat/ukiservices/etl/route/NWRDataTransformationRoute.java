@@ -4,8 +4,10 @@ import javax.inject.Inject;
 import javax.xml.bind.UnmarshalException;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
+import org.apache.camel.cdi.Uri;
 
 import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.factory.DataFormatFactory;
@@ -24,7 +26,12 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 	private ActiveMQComponent activeMQComponent;
 
 	@Inject
-	protected DataFormatFactory dataFormatFactory;
+	private DataFormatFactory dataFormatFactory;
+	
+	@Inject
+	@Uri("infinispan://datagrid-app")
+	private Endpoint datagrid;
+	
 
 	@Override
 	public void configure() throws Exception {
@@ -39,6 +46,7 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 			.choice()
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
 				.log("Received a TrainStatus object")
+				.to(datagrid)
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
 				.log("Received a StationMessage object");
 

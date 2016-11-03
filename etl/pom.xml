@@ -171,13 +171,18 @@
 			<artifactId>camel-cdi</artifactId>
 		</dependency>
 
-
-
-		<!-- JBoss Data Grid Component 
+		<!-- JBoss Data Grid Component --> 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jbossdatagrid</artifactId>
 			<version>${datagrid.version}</version>
+			<exclusions>
+				<!-- Exclude the bloody stupid super jar. This prevents Weld issues at context startup -->
+				<exclusion>
+					<groupId>org.infinispan</groupId>
+					<artifactId>infinispan-embedded</artifact>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -190,7 +195,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-		-->
 		
 		<!-- cdi api -->
 		<dependency>
