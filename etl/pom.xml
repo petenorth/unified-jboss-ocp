@@ -21,6 +21,7 @@
 		<docker.maven.plugin.version>0.13.6</docker.maven.plugin.version>
 		<datagrid.version>6.5.0.Final-redhat-5</datagrid.version>
 		<cache-api.version>1.0.0.redhat-1</cache-api.version>
+		<javassist.version>3.18.1.GA-redhat-2</javassist.version>
 	</properties>
 
 	<repositories>
@@ -171,13 +172,14 @@
 			<artifactId>camel-cdi</artifactId>
 		</dependency>
 
-		<!-- JBoss Data Grid Component --> 
+		<!-- JBoss Data Grid Component -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jbossdatagrid</artifactId>
 			<version>${datagrid.version}</version>
 			<exclusions>
-				<!-- Exclude the bloody stupid super jar. This prevents Weld issues at context startup -->
+				<!-- Exclude the bloody stupid super jar. This prevents Weld issues at 
+					context startup -->
 				<exclusion>
 					<groupId>org.infinispan</groupId>
 					<artifactId>infinispan-embedded</artifactId>
@@ -195,7 +197,13 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist.version}</version>
+		</dependency>
+
 		<!-- cdi api -->
 		<dependency>
 			<groupId>javax.enterprise</groupId>
