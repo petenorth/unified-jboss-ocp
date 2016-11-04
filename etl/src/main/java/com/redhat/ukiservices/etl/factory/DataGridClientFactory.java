@@ -20,7 +20,7 @@ import io.fabric8.annotations.ServiceName;
 public class DataGridClientFactory {
 
 	@Inject
-	@ServiceName("datagrid-app")
+	@ServiceName("datagrid-app-hotrod")
 	private String datagridService;
 
 	@Inject
