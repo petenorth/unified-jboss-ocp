@@ -20,8 +20,8 @@ import io.fabric8.annotations.ServiceName;
 public class DataGridClientFactory {
 
 	@Inject
-	@ServiceName("datagrid-app-hotrod")
-	private String datagridService;
+	@ConfigProperty(name = "DATAGRID_HOTROD_SERVICE", defaultValue = "datagrid-app:11333")
+	private String dgCacheService;
 
 	@Inject
 	@ConfigProperty(name = "DARWIN_CACHE_NAME", defaultValue = "default")
