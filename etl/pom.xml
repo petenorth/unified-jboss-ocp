@@ -19,9 +19,8 @@
 		<fuse.version>6.2.1.redhat-084</fuse.version>
 		<fabric8.version>2.2.0.redhat-079</fabric8.version>
 		<docker.maven.plugin.version>0.13.6</docker.maven.plugin.version>
-		<datagrid.version>6.5.0.Final-redhat-5</datagrid.version>
+		<infinispan.version>6.3.1.Final-redhat-1</infinispan.version>
 		<cache-api.version>1.0.0.redhat-1</cache-api.version>
-		<javassist.version>3.18.1.GA-redhat-2</javassist.version>
 	</properties>
 
 	<repositories>
@@ -147,6 +146,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.infinispan</groupId>
+				<artifactId>infinispan-bom</artifactId>
+				<version>${infinispan.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -172,41 +178,6 @@
 			<artifactId>camel-cdi</artifactId>
 		</dependency>
 
-		<!-- JBoss Data Grid Component -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jbossdatagrid</artifactId>
-			<version>${datagrid.version}</version>
-			<exclusions>
-				<!-- Exclude the bloody stupid super jar. This prevents Weld issues at 
-					context startup -->
-				<exclusion>
-					<groupId>org.infinispan</groupId>
-					<artifactId>infinispan-embedded</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.java</groupId>
-					<artifactId>tools</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.cache</groupId>
-			<artifactId>cache-api</artifactId>
-			<version>${cache-api.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>${javassist.version}</version>
-		</dependency>
 
 		<!-- cdi api -->
 		<dependency>
@@ -218,6 +189,30 @@
 		<dependency>
 			<groupId>io.fabric8</groupId>
 			<artifactId>fabric8-cdi</artifactId>
+		</dependency>
+
+		<!-- Import the infinispan core -->
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+			<version>${cache-api.version}</version>
+		</dependency>
+
+		<!-- Import the Infinispan client hotrod -->
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-client-hotrod</artifactId>
+		</dependency>
+		
+		<!-- Import the Infinispan query api -->
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-query</artifactId>
 		</dependency>
 
 		<!-- need to use a CDI container such as JBoss Weld -->

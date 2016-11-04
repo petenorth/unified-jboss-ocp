@@ -10,12 +10,16 @@ package com.redhat.ukiservices.etl.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 
 /**
@@ -49,18 +53,25 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "lateReason",
     "location"
 })
+@Indexed
 public class TS {
 
+	@Field
     @XmlElement(name = "LateReason")
     protected DisruptionReasonType lateReason;
+    @Field
     @XmlElement(name = "Location")
     protected List<TSLocation> location;
+    @Field
     @XmlAttribute(name = "rid", required = true)
     protected String rid;
+    @Field
     @XmlAttribute(name = "uid", required = true)
     protected String uid;
+    @Field
     @XmlAttribute(name = "ssd", required = true)
     protected XMLGregorianCalendar ssd;
+    @Field
     @XmlAttribute(name = "isReverseFormation")
     protected Boolean isReverseFormation;
 

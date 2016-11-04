@@ -10,6 +10,7 @@ package com.redhat.ukiservices.etl.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,6 +19,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 
 /**
@@ -70,10 +74,13 @@ import javax.xml.bind.annotation.XmlType;
     "station",
     "msg"
 })
+@Indexed
 public class StationMessage {
 
+	@Field
     @XmlElement(name = "Station")
     protected List<StationMessage.Station> station;
+    @Field
     @XmlElement(name = "Msg", required = true)
     protected StationMessage.Msg msg;
     @XmlAttribute(name = "id", required = true)
@@ -251,6 +258,7 @@ public class StationMessage {
      * 
      * 
      */
+    @Indexed
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
         "content"
@@ -261,6 +269,7 @@ public class StationMessage {
             @XmlElementRef(name = "p", namespace = "http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1", type = P.class, required = false),
             @XmlElementRef(name = "a", namespace = "http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1", type = A.class, required = false)
         })
+        @Field
         @XmlMixed
         protected List<Object> content;
 
@@ -315,10 +324,12 @@ public class StationMessage {
      * 
      * 
      */
+    @Indexed
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     public static class Station {
-
+    	
+    	@Field
         @XmlAttribute(name = "crs", required = true)
         protected String crs;
 
