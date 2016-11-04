@@ -31,7 +31,7 @@ public class DataGridClientFactory {
 
 	private DataGridClientFactory() {
 		ConfigurationBuilder builder = new ConfigurationBuilder();
-		builder.addServers(datagridService);
+		builder.addServers(dgCacheService);
 		builder.nearCache().mode(NearCacheMode.LAZY);
 		cacheManager = new RemoteCacheManager(builder.build());
 	}
