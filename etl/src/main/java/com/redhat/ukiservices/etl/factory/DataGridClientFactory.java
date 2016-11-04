@@ -1,5 +1,9 @@
 package com.redhat.ukiservices.etl.factory;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,7 +24,7 @@ import io.fabric8.annotations.ServiceName;
 public class DataGridClientFactory {
 
 	@Inject
-	@ConfigProperty(name = "DATAGRID_HOTROD_SERVICE", defaultValue = "datagrid-app:11333")
+	@ServiceName("datagrid-app-hotrod")
 	private String dgCacheService;
 
 	@Inject
@@ -29,17 +33,38 @@ public class DataGridClientFactory {
 
 	private RemoteCacheManager cacheManager;
 
-	private DataGridClientFactory() {
-		ConfigurationBuilder builder = new ConfigurationBuilder();
-		builder.addServers(dgCacheService);
-		builder.nearCache().mode(NearCacheMode.LAZY);
-		cacheManager = new RemoteCacheManager(builder.build());
-	}
-
 	@Produces
 	@DarwinCache
 	public RemoteCache<String, Object> getCache() {
 		return cacheManager.getCache(darwinCacheName);
+	}
+
+	@PostConstruct
+	protected void postConstruct() {
+		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.addServers(getJDGService());
+		builder.nearCache().mode(NearCacheMode.LAZY).maxEntries(500);
+		cacheManager = new RemoteCacheManager(builder.build());
+	}
+
+	/**
+	 * Couldn't think of an elegant way to build the service URL using the
+	 * Fabric8 guff.
+	 * 
+	 * @return A string representing the JDG Kubernetes service...without the
+	 *         tcp:// protocol prefix
+	 */
+	private String getJDGService() {
+		String urlPattern = "(tcp):((//)*)";
+		Pattern p = Pattern.compile(urlPattern, Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(dgCacheService);
+		int i = 0;
+		String regexedServiceName = null;
+		while (m.find()) {
+			regexedServiceName = dgCacheService.replaceAll(m.group(i), "").trim();
+			i++;
+		}
+		return regexedServiceName;
 	}
 
 }
