@@ -28,6 +28,8 @@ public class RefDataProcessor implements Processor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RefDataProcessor.class);
 
+	private static final String UPDATE_COUNT_MSG = "Refreshed reference data in %d ms: %n Late Reasons: %d %n Cancellation Reasons: %d %n Location Data: %d";
+
 	@Inject
 	@RefDataCache
 	private RemoteCache<String, RefDataModel> refDataCache;
@@ -38,6 +40,8 @@ public class RefDataProcessor implements Processor {
 
 		PportTimetableRef payload = (PportTimetableRef) in.getBody();
 
+		long start = System.currentTimeMillis();
+		int lrCount = 0;
 		for (Reason reason : payload.getLateRunningReasons().getReason()) {
 			RefDataType type = RefDataType.LATEREASON;
 			String code = String.valueOf(reason.getCode());
@@ -45,8 +49,10 @@ public class RefDataProcessor implements Processor {
 
 			RefDataModel lrr = new RefDataModel(type, code, value);
 			refDataCache.put(generateKey(type, code), lrr);
+			lrCount++;
 		}
 
+		int crCount = 0;
 		for (Reason reason : payload.getCancellationReasons().getReason()) {
 
 			RefDataType type = RefDataType.CANCELLATIONREASON;
@@ -55,8 +61,10 @@ public class RefDataProcessor implements Processor {
 
 			RefDataModel cr = new RefDataModel(type, code, value);
 			refDataCache.put(generateKey(type, code), cr);
+			crCount++;
 		}
 
+		int locCount = 0;
 		for (LocationRef loc : payload.getLocationRef()) {
 
 			RefDataType type = RefDataType.LOCATION;
@@ -71,7 +79,12 @@ public class RefDataProcessor implements Processor {
 
 			RefDataModel locRef = new RefDataModel(type, code, value);
 			refDataCache.put(generateKey(type, code), locRef);
+			locCount++;
 		}
+		long end = System.currentTimeMillis();
+		long duration = end - start;
+
+		LOG.info(String.format(UPDATE_COUNT_MSG, duration, lrCount, crCount, locCount));
 
 	}
 
