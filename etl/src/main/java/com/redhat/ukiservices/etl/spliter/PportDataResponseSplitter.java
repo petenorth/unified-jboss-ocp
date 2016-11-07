@@ -14,10 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.EtlConstants;
-import com.redhat.ukiservices.etl.model.Pport;
-import com.redhat.ukiservices.etl.model.Pport.UR;
-import com.redhat.ukiservices.etl.model.StationMessage;
-import com.redhat.ukiservices.etl.model.TS;
+import com.redhat.ukiservices.etl.model.jaxb.Pport;
+import com.redhat.ukiservices.etl.model.jaxb.Pport.UR;
+import com.redhat.ukiservices.etl.model.jaxb.StationMessage;
+import com.redhat.ukiservices.etl.model.jaxb.TS;
+
 
 @Singleton
 @Named("pPortDataResponseSplitter")

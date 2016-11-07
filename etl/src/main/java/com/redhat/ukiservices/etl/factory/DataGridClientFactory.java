@@ -16,6 +16,9 @@ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.configuration.NearCacheMode;
 
 import com.redhat.ukiservices.etl.DarwinCache;
+import com.redhat.ukiservices.etl.RefDataCache;
+import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
+import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
 
 import io.fabric8.annotations.ServiceName;
 
@@ -31,12 +34,26 @@ public class DataGridClientFactory {
 	@ConfigProperty(name = "DARWIN_CACHE_NAME", defaultValue = "default")
 	private String darwinCacheName;
 
+	@Inject
+	@ConfigProperty(name = "REF_DATA_CACHE_NAME", defaultValue = "ref")
+	private String refDataCacheName;
+
 	private RemoteCacheManager cacheManager;
 
 	@Produces
 	@DarwinCache
-	public RemoteCache<String, Object> getCache() {
+	public RemoteCache<String, DarwinDataModel> getDarwinCache() {
 		return cacheManager.getCache(darwinCacheName);
+	}
+
+	@Produces
+	@RefDataCache
+	public RemoteCache<String, RefDataModel> getRefDataCache() {
+		return cacheManager.getCache(refDataCacheName);
+	}
+
+	public RemoteCache<String, Object> getCache(String cacheName) {
+		return cacheManager.getCache(cacheName);
 	}
 
 	@PostConstruct

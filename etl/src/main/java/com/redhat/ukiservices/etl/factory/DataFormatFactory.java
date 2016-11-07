@@ -9,21 +9,17 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 @Named("dataFormatFactory")
 public class DataFormatFactory {
 
-	private JaxbDataFormat jaxbDataFormat;
-
 	/**
 	 * Returns an instance of a jaxbdataformat, so it is kept common across the
 	 * project
 	 * 
 	 * @return
 	 */
-	public JaxbDataFormat getJaxbDataFormat(String contextPath) {
+	public synchronized JaxbDataFormat getJaxbDataFormat(String contextPath) {
 
-		if (jaxbDataFormat == null) {
-			jaxbDataFormat = new JaxbDataFormat();
-			jaxbDataFormat.setContextPath(contextPath);
-			jaxbDataFormat.setMustBeJAXBElement(false);
-		}
+		JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
+		jaxbDataFormat.setContextPath(contextPath);
+		jaxbDataFormat.setMustBeJAXBElement(false);
 		return jaxbDataFormat;
 	}
 

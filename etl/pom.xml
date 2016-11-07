@@ -208,7 +208,7 @@
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-client-hotrod</artifactId>
 		</dependency>
-		
+
 		<!-- Import the Infinispan query api -->
 		<dependency>
 			<groupId>org.infinispan</groupId>
@@ -287,6 +287,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -401,28 +402,45 @@
 				</pluginManagement>
 
 				<plugins>
-
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jaxb2-maven-plugin</artifactId>
 						<version>2.2</version>
 						<executions>
 							<execution>
-								<id>xjc</id>
+								<id>model</id>
 								<goals>
 									<goal>xjc</goal>
 								</goals>
+								<configuration>
+									<packageName>com.redhat.ukiservices.etl.model.jaxb</packageName>
+									<clearOutputDir>true</clearOutputDir>
+									<outputDirectory>${project.build.directory}/generated-sources/jaxb/model</outputDirectory>
+									<sources>
+										<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
+									</sources>
+									<laxSchemaValidation>true</laxSchemaValidation>
+								</configuration>
+							</execution>
+							<execution>
+								<id>ref</id>
+								<goals>
+									<goal>xjc</goal>
+								</goals>
+								<configuration>
+									<packageName>com.redhat.ukiservices.etl.model.jaxb.ref</packageName>
+									<clearOutputDir>true</clearOutputDir>
+									<outputDirectory>${project.build.directory}/generated-sources/jaxb/ref</outputDirectory>
+									<sources>
+										<source>src/main/resources/schemas/ref/rttiCTTReferenceSchema_v3.xsd</source>
+									</sources>
+									<laxSchemaValidation>true</laxSchemaValidation>
+								</configuration>
 							</execution>
 						</executions>
-						<configuration>
-							<packageName>com.redhat.ukiservices.etl.model</packageName>
-							<clearOutputDir>true</clearOutputDir>
-							<sources>
-								<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
-							</sources>
-							<laxSchemaValidation>true</laxSchemaValidation>
-						</configuration>
 					</plugin>
+
+
 				</plugins>
 			</build>
 		</profile>

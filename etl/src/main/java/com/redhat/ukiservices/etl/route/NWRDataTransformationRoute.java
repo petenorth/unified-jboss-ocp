@@ -7,6 +7,7 @@ import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 
+import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.factory.DataFormatFactory;
 
 import io.fabric8.annotations.Alias;
@@ -15,7 +16,7 @@ import io.fabric8.annotations.ServiceName;
 @ContextName("etlContext")
 public class NWRDataTransformationRoute extends RouteBuilder {
 
-	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.etl.model";
+	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.etl.model.jaxb";
 
 	@Inject
 	@ServiceName("broker-amq-tcp")
@@ -32,11 +33,17 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 		onException(UnmarshalException.class)
 				.log("Exception caught during transformation. Is the message the right format?");
 
-		from("amq:queue:ingestdata")
-			.id("etlRoute")
+		from("amq:queue:ingestdata").id("etlRoute")
+			.noAutoStartup()
 			.unmarshal(dataFormatFactory.getJaxbDataFormat(JAXB_MODEL_CONTEXTPATH))
 			.split().method("pPortDataResponseSplitter", "splitDataResponse")
-			.processRef("dataGridProcessor");
+			.choice()
+			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
+				.log("Received a TrainStatus object")
+				.processRef("tsDataTransformer");
+			//.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
+			//	.log("Received a StationMessage object")
+			//	.processRef("owDataTransformer");
 
 
 	}
