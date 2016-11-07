@@ -28,7 +28,8 @@ public class RefDataProcessor implements Processor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RefDataProcessor.class);
 
-	private static final String UPDATE_COUNT_MSG = "Refreshed reference data in %d ms: %n Late Reasons: %d %n Cancellation Reasons: %d %n Location Data: %d";
+	private static final String UPDATE_COUNT_MSG = "Refreshed Reference Data in %d ms: %n Late Reasons: %d %n Cancellation Reasons: %d %n Location Data: %d";
+	private static final String DATA_PUT_MSG = "PUT - Key: %s";
 
 	@Inject
 	@RefDataCache
@@ -48,7 +49,9 @@ public class RefDataProcessor implements Processor {
 			String value = reason.getReasontext();
 
 			RefDataModel lrr = new RefDataModel(type, code, value);
-			refDataCache.put(generateKey(type, code), lrr);
+			String key = generateKey(type, code);
+			refDataCache.put(key, lrr);
+			LOG.debug(String.format(DATA_PUT_MSG, key));
 			lrCount++;
 		}
 
@@ -60,7 +63,9 @@ public class RefDataProcessor implements Processor {
 			String value = reason.getReasontext();
 
 			RefDataModel cr = new RefDataModel(type, code, value);
-			refDataCache.put(generateKey(type, code), cr);
+			String key = generateKey(type, code);
+			refDataCache.put(key, cr);
+			LOG.debug(String.format(DATA_PUT_MSG, key));
 			crCount++;
 		}
 
@@ -78,7 +83,9 @@ public class RefDataProcessor implements Processor {
 			}
 
 			RefDataModel locRef = new RefDataModel(type, code, value);
-			refDataCache.put(generateKey(type, code), locRef);
+			String key = generateKey(type, code);
+			refDataCache.put(key, locRef);
+			LOG.debug(String.format(DATA_PUT_MSG, key));
 			locCount++;
 		}
 		long end = System.currentTimeMillis();

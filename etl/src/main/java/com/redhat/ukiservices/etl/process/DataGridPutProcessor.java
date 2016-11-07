@@ -8,6 +8,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.infinispan.client.hotrod.RemoteCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.DarwinCache;
 import com.redhat.ukiservices.etl.EtlConstants;
@@ -18,6 +20,9 @@ import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
 @Named("datagridPutProcessor")
 public class DataGridPutProcessor implements Processor {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DataGridPutProcessor.class);
+	private static final String DATA_PUT_MSG = "PUT - Key: %s";
+
 	@Inject
 	@DarwinCache
 	private RemoteCache<String, DarwinDataModel> darwinCache;
@@ -27,10 +32,13 @@ public class DataGridPutProcessor implements Processor {
 		Message in = exchange.getIn();
 
 		DarwinDataModel model = (DarwinDataModel) in.getBody();
-		darwinCache.put(generateDarwinDataKey(model.getDarwinDataType(), model.getId()), model);
+		String key = generateDarwinDataKey(model.getDarwinDataType(), model.getId());
+		darwinCache.put(key, model);
+		LOG.info(String.format(DATA_PUT_MSG, key));
+		
 
 	}
-	
+
 	private String generateDarwinDataKey(DarwinDataType type, String id) {
 		StringBuilder sb = new StringBuilder();
 

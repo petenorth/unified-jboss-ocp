@@ -33,7 +33,8 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 		onException(UnmarshalException.class)
 				.log("Exception caught during transformation. Is the message the right format?");
 
-		from("amq:queue:ingestdata").id("etlRoute")
+		from("amq:queue:ingestdata")
+			.id("etlRoute")
 			.unmarshal(dataFormatFactory.getJaxbDataFormat(JAXB_MODEL_CONTEXTPATH))
 			.split().method("pPortDataResponseSplitter", "splitDataResponse")
 			.choice()

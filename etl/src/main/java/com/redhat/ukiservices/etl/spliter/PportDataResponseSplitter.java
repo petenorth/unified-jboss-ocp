@@ -51,7 +51,7 @@ public class PportDataResponseSplitter {
 					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_TS);
 
 					dataResponses.add(createMessage(ts, headers));
-					LOG.info(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_TS, ts.getUid()));
+					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_TS, ts.getUid()));
 				}
 			}
 
@@ -62,7 +62,7 @@ public class PportDataResponseSplitter {
 					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_OW);
 
 					dataResponses.add(createMessage(ow, headers));
-					LOG.info(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_OW,
+					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_OW,
 							String.valueOf(ow.getId())));
 				}
 			}
