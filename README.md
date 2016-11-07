@@ -27,20 +27,28 @@ This provides regular flow of xml formatted data. The data uncompressed and adde
 
 ## Description
 
-Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG
+Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG. Made up of two components:
+
+### Reference Data ETL
+
+Retrieve an XML file of reference data values from source repository and puts it into JDG
+
+### Darwin Data ETL
+
+Retrieves the Objects from the Ingest component, transforms them into a common data format, and puts it into JDG. Used the Reference Data route for augmenting the Darwin Data
 
 # web
 
-Shiny-yet-ultimately-pointless web front end over JDG data
+[TBD] Shiny-yet-ultimately-pointless web front end over JDG data
 
 # sso
 
-Can this play a part somehow?
+[TBD] Can this play a part somehow?
 
 # rules
 
-Maybe we can do some CEP-type stuff over the incoming data flows
+[TBD] Maybe we can do some CEP-type stuff over the incoming data flows
 
 # openshift
 
-Templates for creating the entire project in a single namespace.
+[TBD] Templates for creating the entire project in a single namespace.
