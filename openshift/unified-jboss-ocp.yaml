@@ -1,0 +1,645 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: unified-jboss-ocp
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's AMQP port.
+      service.alpha.openshift.io/dependencies: '[{"name":"broker-amq-tcp","namespace":"","kind":"Service"}]'
+    creationTimestamp: null
+    labels:
+      app: amq62-basic
+      application: broker
+      template: amq62-basic
+      xpaas: 1.3.1
+    name: broker-amq-amqp
+  spec:
+    ports:
+    - port: 5672
+      protocol: TCP
+      targetPort: 5672
+    selector:
+      deploymentConfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's OpenWire port.
+    creationTimestamp: null
+    labels:
+      app: amq62-basic
+      application: broker
+      template: amq62-basic
+      xpaas: 1.3.1
+    name: broker-amq-tcp
+  spec:
+    ports:
+    - port: 61616
+      protocol: TCP
+      targetPort: 61616
+    selector:
+      deploymentConfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The web server's HTTP port.
+      service.alpha.openshift.io/dependencies: '[{"name":"datagrid-app-hotrod","namespace":"","kind":"Service"},{"name":"datagrid-app-memcached","namespace":"","kind":"Service"}]'
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentConfig: datagrid-app
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Hot Rod service for clustered applications.
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app-hotrod
+  spec:
+    ports:
+    - port: 11333
+      protocol: TCP
+      targetPort: 11333
+    selector:
+      deploymentConfig: datagrid-app
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Memcached service for clustered applications.
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app-memcached
+  spec:
+    ports:
+    - port: 11211
+      protocol: TCP
+      targetPort: 11211
+    selector:
+      deploymentConfig: datagrid-app
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: etl
+    name: etl
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: etl
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: ingest
+    name: ingest
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: ingest
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: amq62-basic
+      application: broker
+      template: amq62-basic
+      xpaas: 1.3.1
+    name: broker-amq
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: broker-amq
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 0
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          application: broker
+          deploymentConfig: broker-amq
+        name: broker-amq
+      spec:
+        containers:
+        - env:
+          - name: AMQ_USER
+            value: redhat
+          - name: AMQ_PASSWORD
+            value: redhat
+          - name: AMQ_TRANSPORTS
+            value: openwire
+          - name: AMQ_QUEUES
+          - name: AMQ_TOPICS
+          - name: MQ_SERIALIZABLE_PACKAGES
+          - name: AMQ_MESH_DISCOVERY_TYPE
+            value: kube
+          - name: AMQ_MESH_SERVICE_NAME
+            value: broker-amq-tcp
+          - name: AMQ_MESH_SERVICE_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: AMQ_STORAGE_USAGE_LIMIT
+            value: 100 gb
+          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
+          imagePullPolicy: Always
+          name: broker-amq
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 5672
+            name: amqp
+            protocol: TCP
+          - containerPort: 1883
+            name: mqtt
+            protocol: TCP
+          - containerPort: 61613
+            name: stomp
+            protocol: TCP
+          - containerPort: 61616
+            name: tcp
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/amq/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - broker-amq
+        from:
+          kind: ImageStreamTag
+          name: jboss-amq-62:1.3
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 2
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 8
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: datagrid-app
+    strategy:
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          application: datagrid-app
+          deploymentConfig: datagrid-app
+        name: datagrid-app
+      spec:
+        containers:
+        - env:
+          - name: USERNAME
+            value: redhat
+          - name: PASSWORD
+            value: S3cur1ty!
+          - name: OPENSHIFT_KUBE_PING_LABELS
+            value: application=datagrid-app
+          - name: OPENSHIFT_KUBE_PING_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: INFINISPAN_CONNECTORS
+            value: hotrod,rest
+          - name: CACHE_NAMES
+            value: default,ref,darwindata
+          - name: ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH
+          - name: HOTROD_SERVICE_NAME
+            value: datagrid-app-hotrod
+          - name: MEMCACHED_CACHE
+            value: default
+          - name: REST_SECURITY_DOMAIN
+          - name: JGROUPS_CLUSTER_PASSWORD
+            value: fAGkPvYy
+          - name: REF_CACHE_TYPE
+            value: replicated
+          - name: DARWINDATA_CACHE_TYPE
+            value: replicated
+          image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/datagrid/bin/livenessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: datagrid-app
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8888
+            name: ping
+            protocol: TCP
+          - containerPort: 11211
+            name: memcached
+            protocol: TCP
+          - containerPort: 11222
+            name: hotrod
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/datagrid/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - datagrid-app
+        from:
+          kind: ImageStreamTag
+          name: jboss-datagrid65-openshift:1.2
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 8
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 38
+    labels:
+      app: etl
+    name: etl
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: etl
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: etl
+          deploymentconfig: etl
+      spec:
+        containers:
+        - env:
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref/
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          image: 172.30.237.8:5000/appdev/etl@sha256:6e14dda34fadf2af77c2ceda346459cf26ce3dbda0a6d5dc39f3a3e514e9bee5
+          imagePullPolicy: Always
+          name: etl
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - etl
+        from:
+          kind: ImageStreamTag
+          name: etl:latest
+          namespace: appdev
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 38
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 19
+    labels:
+      app: ingest
+    name: ingest
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: ingest
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: ingest
+          deploymentconfig: ingest
+      spec:
+        containers:
+        - env:
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          image: 172.30.237.8:5000/appdev/ingest@sha256:2cdceb1e8140076fdea5e3bb0ee6df35fd40aacce79474eb9a4bfc00d90dbdda
+          imagePullPolicy: Always
+          name: ingest
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ingest
+        from:
+          kind: ImageStreamTag
+          name: ingest:latest
+          namespace: appdev
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 19
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: etl
+    name: etl
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: etl:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: etl
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - generic:
+        secret: 2e90117a350d7e5c
+      type: Generic
+    - github:
+        secret: c20c612fcbda5d61
+      type: GitHub
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: ingest
+    name: ingest
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ingest:latest
+        namespace: appdev
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: ingest
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: 29c2ba59c08f0050
+      type: GitHub
+    - generic:
+        secret: f9a77f81fdabc5e0
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's HTTP service.
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app
+  spec:
+    host: datagrid-app-appdev.rhel-cdk.10.1.2.2.xip.io
+    to:
+      kind: Service
+      name: datagrid-app
+      weight: 100
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2016-11-03T08:28:17Z
+        status: "True"
+        type: Admitted
+      host: datagrid-app-appdev.rhel-cdk.10.1.2.2.xip.io
+      routerName: router
