@@ -27,7 +27,15 @@ This provides regular flow of xml formatted data. The data uncompressed and adde
 
 ## Description
 
-Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG
+Gratuitous transformation of data from ingestion format into something KV-friendly, for insertion into JDG. Made up of two components:
+
+### Reference Data ETL
+
+Retrieve an XML file of reference data values from source repository and puts it into JDG
+
+### Darwin Data ETL
+
+Retrieves the Objects from the Ingest component, transforms them into a common data format, and puts it into JDG. Used the Reference Data route for augmenting the Darwin Data
 
 # web
 
