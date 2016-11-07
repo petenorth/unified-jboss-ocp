@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eo pipefail
+
+if [ x"$REFERENCE_DATA_DIRECTORY" != "x" ]; then
+    mkdir -p /deployments/ref
+    cp /tmp/src/src/main/resources/ref/* /deployments/ref/
+fi
+
+exec /usr/local/s2i/run
