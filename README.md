@@ -39,16 +39,16 @@ Retrieves the Objects from the Ingest component, transforms them into a common d
 
 # web
 
-Shiny-yet-ultimately-pointless web front end over JDG data
+[TBD] Shiny-yet-ultimately-pointless web front end over JDG data
 
 # sso
 
-Can this play a part somehow?
+[TBD] Can this play a part somehow?
 
 # rules
 
-Maybe we can do some CEP-type stuff over the incoming data flows
+[TBD] Maybe we can do some CEP-type stuff over the incoming data flows
 
 # openshift
 
-Templates for creating the entire project in a single namespace.
+[TBD] Templates for creating the entire project in a single namespace.
