@@ -74,4 +74,69 @@ public class RefDataModel implements IRefData {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RefDataModel [getRDType()=");
+		builder.append(getRDType());
+		builder.append(", getCode()=");
+		builder.append(getCode());
+		builder.append(", getAlternateCodes()=");
+		builder.append(getAlternateCodes());
+		builder.append(", getValue()=");
+		builder.append(getValue());
+		builder.append("]");
+		return builder.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((alternateCodes == null) ? 0 : alternateCodes.hashCode());
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((rdType == null) ? 0 : rdType.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RefDataModel other = (RefDataModel) obj;
+		if (alternateCodes == null) {
+			if (other.alternateCodes != null)
+				return false;
+		} else if (!alternateCodes.equals(other.alternateCodes))
+			return false;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equalsIgnoreCase(other.code))
+			return false;
+		if (rdType != other.rdType)
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equalsIgnoreCase(other.value))
+			return false;
+		return true;
+	}
+
+	
 }

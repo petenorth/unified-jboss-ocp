@@ -11,8 +11,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.Search;
-import org.infinispan.query.dsl.QueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +24,7 @@ import com.redhat.ukiservices.etl.model.jaxb.StationMessage;
 import com.redhat.ukiservices.etl.model.jaxb.StationMessage.Station;
 
 @Singleton
-@Named("tsDataTransformer")
+@Named("owDataTransformer")
 public class OWDataTransformer implements Processor {
 
 	private static Logger LOG = LoggerFactory.getLogger(OWDataTransformer.class);
@@ -60,18 +58,5 @@ public class OWDataTransformer implements Processor {
 		in.setBody(model);
 		exchange.setIn(in);
 	}
-	
-	private String generateRefDataKey(RefDataType type, String code) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(type.toString());
-		sb.append(EtlConstants.KEY_DELIMITER);
-		sb.append(code);
-
-		return sb.toString();
-
-	}
-	
-	
 
 }

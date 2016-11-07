@@ -67,7 +67,9 @@ public class TSDataTransformer implements Processor {
 		}
 
 		DarwinDataModel model = new DarwinDataModel(DarwinDataType.TRAINSTATUS, id, lateReasonMessage, locations);
+		
 		in.setBody(model);
+		exchange.setIn(in);
 
 	}
 

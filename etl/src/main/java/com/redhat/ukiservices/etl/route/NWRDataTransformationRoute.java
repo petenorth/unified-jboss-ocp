@@ -40,10 +40,12 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 			.choice()
 			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
 				.log("Received a TrainStatus object")
-				.processRef("tsDataTransformer");
-			//.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
-			//	.log("Received a StationMessage object")
-			//	.processRef("owDataTransformer");
+				.processRef("tsDataTransformer")
+				.processRef("datagridPutProcessor")
+			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
+				.log("Received a StationMessage object")
+				.processRef("owDataTransformer")
+				.processRef("datagridPutProcessor");
 
 
 	}

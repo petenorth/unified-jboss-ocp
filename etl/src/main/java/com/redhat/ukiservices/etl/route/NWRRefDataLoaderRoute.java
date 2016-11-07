@@ -24,7 +24,8 @@ public class NWRRefDataLoaderRoute extends RouteBuilder {
 	public void configure() throws Exception {
 		from(buildFileConsumer()).id("refDataRoute")
 				.unmarshal(dataFormatFactory.getJaxbDataFormat(JAXB_MODEL_CONTEXTPATH))
-				.processRef("refDataProcessor");
+				.processRef("refDataProcessor")
+				.log("Reference Data refresh completed from ${in.header.CamelFileName}");
 
 	}
 
