@@ -1,5 +1,6 @@
 package com.redhat.ukiservices.etl.model.common.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,14 +11,22 @@ import com.redhat.ukiservices.etl.model.common.IRefData;
 import com.redhat.ukiservices.etl.model.common.RefDataType;
 
 @Indexed
-public class RefDataModel implements IRefData {
+public class RefDataModel implements IRefData, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4473274870937954222L;
 
 	@Field
 	private RefDataType rdType;
+	
 	@Field
 	private String code;
+	
 	@Field
 	private Map<String, String> alternateCodes;
+	
 	@Field
 	private String value;
 
@@ -74,7 +83,9 @@ public class RefDataModel implements IRefData {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -92,7 +103,9 @@ public class RefDataModel implements IRefData {
 		return builder.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -106,7 +119,9 @@ public class RefDataModel implements IRefData {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -138,5 +153,4 @@ public class RefDataModel implements IRefData {
 		return true;
 	}
 
-	
 }

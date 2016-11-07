@@ -1,5 +1,6 @@
 package com.redhat.ukiservices.etl.model.common.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,12 @@ import com.redhat.ukiservices.etl.model.common.DarwinDataType;
 import com.redhat.ukiservices.etl.model.common.IDarwinData;
 
 @Indexed
-public class DarwinDataModel implements IDarwinData {
+public class DarwinDataModel implements IDarwinData, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4918206326578441127L;
 
 	@Field
 	private DarwinDataType ddType;
