@@ -40,7 +40,7 @@ public class TSDataTransformer implements Processor {
 		Message in = exchange.getIn();
 
 		TS ts = (TS) in.getBody();
-		String id = ts.getRid();
+		String id = ts.getUid();
 
 		DisruptionReasonType lateReason = ts.getLateReason();
 
