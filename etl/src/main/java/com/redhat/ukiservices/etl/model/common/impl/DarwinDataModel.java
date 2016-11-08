@@ -25,19 +25,15 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	private static final long serialVersionUID = 4918206326578441127L;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 1, required = true)
 	private DarwinDataType ddType;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 2, required = true)
 	private String id;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 3, required = true)
 	private String message;
 
 	@IndexedEmbedded
-	@ProtoField(number = 4)
 	private List<String> locations;
 
 	public DarwinDataModel() {
@@ -52,6 +48,7 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	}
 
 	@Override
+	@ProtoField(number = 1, required = true)
 	public DarwinDataType getDarwinDataType() {
 		return ddType;
 	}
@@ -62,29 +59,31 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	}
 
 	@Override
+	@ProtoField(number = 2, required = true)
 	public String getId() {
 		return id;
 	}
 
 	@Override
 	public void setId(String id) {
-		// TODO Auto-generated method stub
+		this.id = id;
 
 	}
 
 	@Override
+	@ProtoField(number = 3, required = true)
 	public String getMessage() {
-		// TODO Auto-generated method stub
 		return message;
 	}
 
 	@Override
 	public void setMessage(String message) {
-		// TODO Auto-generated method stub
+		this.message = message;
 
 	}
 
 	@Override
+	@ProtoField(number = 4)
 	public List<String> getLocations() {
 
 		if (locations == null) {

@@ -25,19 +25,15 @@ public class RefDataModel implements IRefData, Serializable {
 	private static final long serialVersionUID = 4473274870937954222L;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 1, required = true)
 	private RefDataType rdType;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 2, required = true)
 	private String code;
 
 	@IndexedEmbedded
-	@ProtoField(number = 3)
 	private Map<String, String> alternateCodes;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	@ProtoField(number = 4, required = true)
 	private String value;
 
 	public RefDataModel() {
@@ -50,7 +46,8 @@ public class RefDataModel implements IRefData, Serializable {
 		this.value = value;
 	}
 
-	@Override
+	@Override	
+	@ProtoField(number = 1, required = true)
 	public RefDataType getRDType() {
 		return rdType;
 	}
@@ -62,6 +59,7 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
+	@ProtoField(number = 2, required = true)
 	public String getCode() {
 		return code;
 	}
@@ -73,6 +71,7 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
+	@ProtoField(number = 3)
 	public Map<String, String> getAlternateCodes() {
 		if (alternateCodes == null) {
 			alternateCodes = new HashMap<>();
@@ -87,6 +86,7 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
+	@ProtoField(number = 4, required = true)
 	public String getValue() {
 		return value;
 	}
