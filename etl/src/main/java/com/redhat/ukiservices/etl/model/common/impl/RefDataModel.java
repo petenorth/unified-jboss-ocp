@@ -71,7 +71,6 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
-	@ProtoField(number = 3)
 	public HashMap<String, String> getAlternateCodes() {
 		if (alternateCodes == null) {
 			alternateCodes = new HashMap<>();
@@ -86,7 +85,7 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
-	@ProtoField(number = 4, required = true)
+	@ProtoField(number = 3, required = true)
 	public String getValue() {
 		return value;
 	}
