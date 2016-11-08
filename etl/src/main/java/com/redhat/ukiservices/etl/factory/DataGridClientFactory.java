@@ -73,23 +73,38 @@ public class DataGridClientFactory {
 		builder.nearCache().mode(NearCacheMode.LAZY).maxEntries(500);
 		builder.marshaller(new ProtoStreamMarshaller());
 		cacheManager = new RemoteCacheManager(builder.build());
+		
+		registerProtoBufSchema();
+		
 	}
 	
 	
-	private void registerProtoBufSchema() throws IOException
+	private void registerProtoBufSchema()
 	{
 		SerializationContext serCtx = 
 			    ProtoStreamMarshaller.getSerializationContext(cacheManager);
 		
-		ProtoSchemaBuilder protoSchemaBuilder = new ProtoSchemaBuilder();
-		String generatedSchema = protoSchemaBuilder
-		    .fileName("darwinschema.proto")
-		    .packageName("etl")
-		    .addClass(RefDataType.class)
-		    .addClass(DarwinDataType.class)
-		    .addClass(RefDataModel.class)
-		    .addClass(DarwinDataModel.class)
-		    .build(serCtx);
+		String generatedSchema = null;
+		try
+		{
+			ProtoSchemaBuilder protoSchemaBuilder = new ProtoSchemaBuilder();
+			generatedSchema = protoSchemaBuilder
+			    .fileName("darwinschema.proto")
+			    .packageName("etl")
+			    .addClass(RefDataType.class)
+			    .addClass(DarwinDataType.class)
+			    .addClass(RefDataModel.class)
+			    .addClass(DarwinDataModel.class)
+			    .build(serCtx);
+		}
+		catch(IOException e1)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.append("No schema generated because of Exception:");
+			sb.append(e1.getMessage());
+			generatedSchema = sb.toString();
+		}
+
 		
 		LOG.info(generatedSchema);
 	}
