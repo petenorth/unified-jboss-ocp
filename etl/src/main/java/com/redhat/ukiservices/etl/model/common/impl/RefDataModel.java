@@ -31,7 +31,7 @@ public class RefDataModel implements IRefData, Serializable {
 	private String code;
 
 	@IndexedEmbedded
-	private Map<String, String> alternateCodes;
+	private HashMap<String, String> alternateCodes;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
 	private String value;
@@ -72,7 +72,7 @@ public class RefDataModel implements IRefData, Serializable {
 
 	@Override
 	@ProtoField(number = 3)
-	public Map<String, String> getAlternateCodes() {
+	public HashMap<String, String> getAlternateCodes() {
 		if (alternateCodes == null) {
 			alternateCodes = new HashMap<>();
 		}
@@ -80,7 +80,7 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
-	public void setAlternateCodes(Map<String, String> codes) {
+	public void setAlternateCodes(HashMap<String, String> codes) {
 		this.alternateCodes = codes;
 
 	}
