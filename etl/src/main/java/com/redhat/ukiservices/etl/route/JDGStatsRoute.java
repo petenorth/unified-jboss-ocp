@@ -11,7 +11,7 @@ import org.apache.camel.cdi.Uri;
 public class JDGStatsRoute extends RouteBuilder {
 
 	@Inject
-	@Uri("scheduler://foo?period=120s")
+	@Uri("timer://stats?fixedRate=true&period=120s&delay=30s")
 	private Endpoint scheduler;
 
 	@Override
