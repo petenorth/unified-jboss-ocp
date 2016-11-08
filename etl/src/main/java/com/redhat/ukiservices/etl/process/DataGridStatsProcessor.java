@@ -38,7 +38,7 @@ public class DataGridStatsProcessor implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		Message in = exchange.getIn();
 
-		int locations = countRefDataCacheObjects("rdType", RefDataType.LOCATION);
+		int locations = countRefDataCacheObjects("rDType", RefDataType.LOCATION);
 		int birminghamIssues = countDarwinDataCacheObjects("locations", "BHAMNWS");
 		in.setBody(String.format(OUTPUT_LOG_MESSAGE, locations, birminghamIssues));
 		exchange.setIn(in);

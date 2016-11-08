@@ -24,7 +24,7 @@ public class RefDataModel implements IRefData, Serializable {
 	private static final long serialVersionUID = 4473274870937954222L;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
-	private RefDataType rdType;
+	private RefDataType rDType;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
 	private String code;
@@ -39,14 +39,14 @@ public class RefDataModel implements IRefData, Serializable {
 		// Default constructor for ProtoBuf purposes
 	}
 	
-	public RefDataModel(RefDataType rdType, String code, String value) {
-		this.rdType = rdType;
+	public RefDataModel(RefDataType rDType, String code, String value) {
+		this.rDType = rDType;
 		this.code = code;
 		this.value = value;
 	}
 
-	public RefDataModel(RefDataType rdType, String code, ArrayList<String> alternateCodes, String value) {
-		this.rdType = rdType;
+	public RefDataModel(RefDataType rDType, String code, ArrayList<String> alternateCodes, String value) {
+		this.rDType = rDType;
 		this.code = code;
 		this.alternateCodes = alternateCodes;
 		this.value = value;
@@ -55,12 +55,12 @@ public class RefDataModel implements IRefData, Serializable {
 	@Override	
 	@ProtoField(number = 1, required = true)
 	public RefDataType getRDType() {
-		return rdType;
+		return rDType;
 	}
 
 	@Override
-	public void setRDType(RefDataType rdType) {
-		this.rdType = rdType;
+	public void setRDType(RefDataType rDType) {
+		this.rDType = rDType;
 
 	}
 
@@ -134,7 +134,7 @@ public class RefDataModel implements IRefData, Serializable {
 		int result = 1;
 		result = prime * result + ((alternateCodes == null) ? 0 : alternateCodes.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + ((rdType == null) ? 0 : rdType.hashCode());
+		result = prime * result + ((rDType == null) ? 0 : rDType.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -163,7 +163,7 @@ public class RefDataModel implements IRefData, Serializable {
 				return false;
 		} else if (!code.equalsIgnoreCase(other.code))
 			return false;
-		if (rdType != other.rdType)
+		if (rDType != other.rDType)
 			return false;
 		if (value == null) {
 			if (other.value != null)
