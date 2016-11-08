@@ -21,7 +21,7 @@ import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
 public class DataGridPutProcessor implements Processor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DataGridPutProcessor.class);
-	private static final String DATA_PUT_MSG = "PUT - Key: %s";
+	private static final String DATA_PUT_MSG = "PUT: %s";
 
 	@Inject
 	@DarwinCache
@@ -34,7 +34,7 @@ public class DataGridPutProcessor implements Processor {
 		DarwinDataModel model = (DarwinDataModel) in.getBody();
 		String key = generateDarwinDataKey(model.getDarwinDataType(), model.getId());
 		darwinCache.put(key, model);
-		LOG.info(String.format(DATA_PUT_MSG, key));
+		LOG.info(String.format(DATA_PUT_MSG, model.toString()));
 		
 
 	}
