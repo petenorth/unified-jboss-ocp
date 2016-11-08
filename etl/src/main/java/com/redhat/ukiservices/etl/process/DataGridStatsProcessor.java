@@ -39,7 +39,7 @@ public class DataGridStatsProcessor implements Processor {
 		Message in = exchange.getIn();
 
 		int locations = countRefDataCacheObjects("rDType", RefDataType.LOCATION);
-		int birminghamIssues = countDarwinDataCacheObjects("locations", "BHAMNWS");
+		int birminghamIssues = countDarwinDataCacheObjects("locations", "Birmingham New Street");
 		in.setBody(String.format(OUTPUT_LOG_MESSAGE, locations, birminghamIssues));
 		exchange.setIn(in);
 
