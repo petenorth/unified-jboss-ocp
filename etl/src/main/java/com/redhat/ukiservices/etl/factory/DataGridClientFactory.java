@@ -1,5 +1,6 @@
 package com.redhat.ukiservices.etl.factory;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,14 +11,20 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
+import org.apache.log4j.Logger;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.configuration.NearCacheMode;
 import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
+import org.infinispan.protostream.SerializationContext;
+import org.infinispan.protostream.annotations.ProtoSchemaBuilder;
+import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.DarwinCache;
 import com.redhat.ukiservices.etl.RefDataCache;
+import com.redhat.ukiservices.etl.model.common.DarwinDataType;
+import com.redhat.ukiservices.etl.model.common.RefDataType;
 import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
 import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
 
@@ -26,6 +33,8 @@ import io.fabric8.annotations.ServiceName;
 @Singleton
 @Named("dgClientFactory")
 public class DataGridClientFactory {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DataGridClientFactory.class);
 
 	@Inject
 	@ServiceName("datagrid-app-hotrod")
@@ -64,6 +73,25 @@ public class DataGridClientFactory {
 		builder.nearCache().mode(NearCacheMode.LAZY).maxEntries(500);
 		builder.marshaller(new ProtoStreamMarshaller());
 		cacheManager = new RemoteCacheManager(builder.build());
+	}
+	
+	
+	private void registerProtoBufSchema() throws IOException
+	{
+		SerializationContext serCtx = 
+			    ProtoStreamMarshaller.getSerializationContext(cacheManager);
+		
+		ProtoSchemaBuilder protoSchemaBuilder = new ProtoSchemaBuilder();
+		String generatedSchema = protoSchemaBuilder
+		    .fileName("darwinschema.proto")
+		    .packageName("etl")
+		    .addClass(RefDataType.class)
+		    .addClass(DarwinDataType.class)
+		    .addClass(RefDataModel.class)
+		    .addClass(DarwinDataModel.class)
+		    .build(serCtx);
+		
+		LOG.info(generatedSchema);
 	}
 
 	/**
