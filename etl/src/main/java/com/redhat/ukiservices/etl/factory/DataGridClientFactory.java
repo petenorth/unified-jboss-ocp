@@ -11,7 +11,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
-import org.apache.log4j.Logger;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -19,6 +18,7 @@ import org.infinispan.client.hotrod.configuration.NearCacheMode;
 import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.annotations.ProtoSchemaBuilder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.DarwinCache;
