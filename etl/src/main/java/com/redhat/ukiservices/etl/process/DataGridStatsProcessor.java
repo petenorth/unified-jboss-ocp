@@ -48,7 +48,7 @@ public class DataGridStatsProcessor implements Processor {
 
 		QueryFactory<Query> qf = Search.getQueryFactory(refDataCache);
 
-		Query query = qf.from(RefDataModel.class).having(field).eq(term).toBuilder().build();
+		Query query = qf.from("RefDataModel").having(field).eq(term).toBuilder().build();
 
 		List results = query.list();
 

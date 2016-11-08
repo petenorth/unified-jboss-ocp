@@ -11,12 +11,13 @@ import org.apache.camel.cdi.Uri;
 public class JDGStatsRoute extends RouteBuilder {
 
 	@Inject
-	@Uri("timer://stats?fixedRate=true&period=120s&delay=30s")
+	@Uri("timer://stats?fixedRate=true&period=120s&delay=60s")
 	private Endpoint scheduler;
 
 	@Override
 	public void configure() throws Exception {
 		from(scheduler)
+		.startupOrder(2)
 		.id("jdgStatsRoute")
 		.processRef("dgStatsProcessor")
 		.log("${body}");
