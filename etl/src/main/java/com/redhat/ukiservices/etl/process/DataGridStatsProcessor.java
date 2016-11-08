@@ -41,6 +41,7 @@ public class DataGridStatsProcessor implements Processor {
 		int locations = countRefDataCacheObjects("rdType", RefDataType.LOCATION);
 		int birminghamIssues = countDarwinDataCacheObjects("locations", "BHAMNWS");
 		in.setBody(String.format(OUTPUT_LOG_MESSAGE, locations, birminghamIssues));
+		exchange.setIn(in);
 
 	}
 
@@ -48,7 +49,7 @@ public class DataGridStatsProcessor implements Processor {
 
 		QueryFactory<Query> qf = Search.getQueryFactory(refDataCache);
 
-		Query query = qf.from("RefDataModel").having(field).eq(term).toBuilder().build();
+		Query query = qf.from(RefDataModel.class).having(field).eq(term).toBuilder().build();
 
 		List results = query.list();
 

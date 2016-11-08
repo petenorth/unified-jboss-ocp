@@ -18,6 +18,7 @@ import org.infinispan.client.hotrod.configuration.NearCacheMode;
 import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.annotations.ProtoSchemaBuilder;
+import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ import io.fabric8.annotations.ServiceName;
 @Singleton
 @Named("dgClientFactory")
 public class DataGridClientFactory {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DataGridClientFactory.class);
 
 	@Inject
@@ -73,39 +74,34 @@ public class DataGridClientFactory {
 		builder.nearCache().mode(NearCacheMode.LAZY).maxEntries(500);
 		builder.marshaller(new ProtoStreamMarshaller());
 		cacheManager = new RemoteCacheManager(builder.build());
-		
+
 		registerProtoBufSchema();
-		
+
 	}
-	
-	
-	private void registerProtoBufSchema()
-	{
-		SerializationContext serCtx = 
-			    ProtoStreamMarshaller.getSerializationContext(cacheManager);
-		
+
+	private void registerProtoBufSchema() {
+		SerializationContext serCtx = ProtoStreamMarshaller.getSerializationContext(cacheManager);
+
 		String generatedSchema = null;
-		try
-		{
+		try {
 			ProtoSchemaBuilder protoSchemaBuilder = new ProtoSchemaBuilder();
-			generatedSchema = protoSchemaBuilder
-			    .fileName("darwinschema.proto")
-			    .packageName("etl")
-			    .addClass(RefDataType.class)
-			    .addClass(DarwinDataType.class)
-			    .addClass(RefDataModel.class)
-			    .addClass(DarwinDataModel.class)
-			    .build(serCtx);
-		}
-		catch(IOException e1)
-		{
+			generatedSchema = protoSchemaBuilder.fileName("darwinschema.proto").packageName("etl")
+					.addClass(RefDataType.class).addClass(DarwinDataType.class).addClass(RefDataModel.class)
+					.addClass(DarwinDataModel.class).build(serCtx);
+
+			// register the schemas with the server too
+			RemoteCache<String, String> metadataCache = cacheManager
+					.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
+
+			metadataCache.put("darwinschema.proto", generatedSchema);
+
+		} catch (IOException e1) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("No schema generated because of Exception:");
 			sb.append(e1.getMessage());
 			generatedSchema = sb.toString();
 		}
 
-		
 		LOG.info(generatedSchema);
 	}
 
