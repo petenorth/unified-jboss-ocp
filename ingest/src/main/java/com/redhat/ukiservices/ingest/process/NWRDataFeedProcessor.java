@@ -11,10 +11,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.fusesource.hawtbuf.Buffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 @Named("nwrDataFeedProcessor")
 public class NWRDataFeedProcessor implements Processor {
+	
+	private static Logger LOG = LoggerFactory.getLogger(NWRDataFeedProcessor.class);
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
@@ -34,8 +38,12 @@ public class NWRDataFeedProcessor implements Processor {
 		while ((line = reader.readLine()) != null) {
 			sb.append(line);
 		}
-
-		in.setBody(sb.toString());
+		
+		String body = sb.toString();
+		
+		LOG.debug(body);
+		
+		in.setBody(body);
 		
 		exchange.setIn(in);
 	}
