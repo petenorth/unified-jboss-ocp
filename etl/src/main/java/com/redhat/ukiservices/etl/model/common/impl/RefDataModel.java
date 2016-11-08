@@ -40,6 +40,10 @@ public class RefDataModel implements IRefData, Serializable {
 	@ProtoField(number = 4, required = true)
 	private String value;
 
+	public RefDataModel() {
+		// Default constructor for ProtoBuf purposes
+	}
+
 	public RefDataModel(RefDataType rdType, String code, String value) {
 		this.rdType = rdType;
 		this.code = code;

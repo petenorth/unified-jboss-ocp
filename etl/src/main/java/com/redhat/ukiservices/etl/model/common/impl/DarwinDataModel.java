@@ -39,7 +39,11 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	@IndexedEmbedded
 	@ProtoField(number = 4)
 	private List<String> locations;
-	
+
+	public DarwinDataModel() {
+		// Default constructor for ProtoBuf purposes
+	}
+
 	public DarwinDataModel(DarwinDataType ddType, String id, String message, List<String> locations) {
 		this.ddType = ddType;
 		this.id = id;
@@ -96,7 +100,9 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -114,7 +120,9 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 		return builder.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -128,7 +136,9 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -159,7 +169,5 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }
