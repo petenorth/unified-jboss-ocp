@@ -41,20 +41,18 @@ public class OWDataTransformer implements Processor {
 		StationMessage ow = (StationMessage) in.getBody();
 		String id = String.valueOf(ow.getId());
 		StringBuilder sb = new StringBuilder();
-		for (Object content : ow.getMsg().getContent())
-		{
+		for (Object content : ow.getMsg().getContent()) {
 			sb.append(content.toString());
 		}
-		
-		List<String> locations = new ArrayList<>();
-		
-		for (Station station: ow.getStation())
-		{
+
+		ArrayList<String> locations = new ArrayList<>();
+
+		for (Station station : ow.getStation()) {
 			locations.add(station.getCrs());
 		}
-		
-		DarwinDataModel model = new DarwinDataModel(DarwinDataType.STATIONMESSAGE,id,sb.toString(), locations); 
-		
+
+		DarwinDataModel model = new DarwinDataModel(DarwinDataType.STATIONMESSAGE, id, sb.toString(), locations);
+
 		in.setBody(model);
 		exchange.setIn(in);
 	}

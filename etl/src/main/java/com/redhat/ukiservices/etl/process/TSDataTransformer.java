@@ -48,14 +48,13 @@ public class TSDataTransformer implements Processor {
 		if (lateReason != null) {
 			String messageKey = generateRefDataKey(RefDataType.LATEREASON, String.valueOf(lateReason.getValue()));
 			RefDataModel refDataLateReason = refDataCache.get(messageKey);
-			if (refDataLateReason != null)
-			{
+			if (refDataLateReason != null) {
 				lateReasonMessage = refDataLateReason.getValue();
 			}
-			
+
 		}
 
-		List<String> locations = new ArrayList<>();
+		ArrayList<String> locations = new ArrayList<>();
 
 		for (TSLocation loc : ts.getLocation()) {
 
@@ -67,7 +66,7 @@ public class TSDataTransformer implements Processor {
 		}
 
 		DarwinDataModel model = new DarwinDataModel(DarwinDataType.TRAINSTATUS, id, lateReasonMessage, locations);
-		
+
 		in.setBody(model);
 		exchange.setIn(in);
 
