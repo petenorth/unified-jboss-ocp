@@ -209,6 +209,17 @@
 			<artifactId>infinispan-client-hotrod</artifactId>
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-query-dsl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-remote-query-client</artifactId>
+		</dependency>
+
 		<!-- Import the Infinispan query api -->
 		<dependency>
 			<groupId>org.infinispan</groupId>

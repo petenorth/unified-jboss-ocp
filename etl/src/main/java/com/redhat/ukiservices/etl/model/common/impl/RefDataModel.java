@@ -4,13 +4,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
+import org.infinispan.protostream.annotations.ProtoField;
+import org.infinispan.protostream.annotations.ProtoMessage;
 
 import com.redhat.ukiservices.etl.model.common.IRefData;
 import com.redhat.ukiservices.etl.model.common.RefDataType;
 
 @Indexed
+@ProtoMessage(name = "RefDataModel")
 public class RefDataModel implements IRefData, Serializable {
 
 	/**
@@ -18,16 +24,20 @@ public class RefDataModel implements IRefData, Serializable {
 	 */
 	private static final long serialVersionUID = 4473274870937954222L;
 
-	@Field
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 1, required = true)
 	private RefDataType rdType;
-	
-	@Field
+
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 2, required = true)
 	private String code;
-	
-	@Field
+
+	@IndexedEmbedded
+	@ProtoField(number = 3)
 	private Map<String, String> alternateCodes;
-	
-	@Field
+
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 4, required = true)
 	private String value;
 
 	public RefDataModel(RefDataType rdType, String code, String value) {

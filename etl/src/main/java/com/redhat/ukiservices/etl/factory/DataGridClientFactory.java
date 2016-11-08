@@ -14,6 +14,7 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.configuration.NearCacheMode;
+import org.infinispan.client.hotrod.marshall.ProtoStreamMarshaller;
 
 import com.redhat.ukiservices.etl.DarwinCache;
 import com.redhat.ukiservices.etl.RefDataCache;
@@ -61,6 +62,7 @@ public class DataGridClientFactory {
 		ConfigurationBuilder builder = new ConfigurationBuilder();
 		builder.addServers(getJDGService());
 		builder.nearCache().mode(NearCacheMode.LAZY).maxEntries(500);
+		builder.marshaller(new ProtoStreamMarshaller());
 		cacheManager = new RemoteCacheManager(builder.build());
 	}
 

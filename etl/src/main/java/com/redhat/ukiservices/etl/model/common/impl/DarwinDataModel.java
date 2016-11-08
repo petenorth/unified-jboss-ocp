@@ -4,13 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
+import org.infinispan.protostream.annotations.ProtoField;
+import org.infinispan.protostream.annotations.ProtoMessage;
 
 import com.redhat.ukiservices.etl.model.common.DarwinDataType;
 import com.redhat.ukiservices.etl.model.common.IDarwinData;
 
 @Indexed
+@ProtoMessage(name = "DarwinDataModel")
 public class DarwinDataModel implements IDarwinData, Serializable {
 
 	/**
@@ -18,16 +24,20 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	 */
 	private static final long serialVersionUID = 4918206326578441127L;
 
-	@Field
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 1, required = true)
 	private DarwinDataType ddType;
 
-	@Field
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 2, required = true)
 	private String id;
 
-	@Field
+	@Field(store = Store.YES, analyze = Analyze.YES)
+	@ProtoField(number = 3, required = true)
 	private String message;
 
-	@Field
+	@IndexedEmbedded
+	@ProtoField(number = 4)
 	private List<String> locations;
 	
 	public DarwinDataModel(DarwinDataType ddType, String id, String message, List<String> locations) {
