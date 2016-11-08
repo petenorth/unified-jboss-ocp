@@ -1,6 +1,6 @@
 package com.redhat.ukiservices.etl.model.common;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface IDarwinData {
 
@@ -36,8 +36,8 @@ public interface IDarwinData {
 	 * 
 	 * @return List<String>
 	 */
-	public List<String> getLocations();
+	public ArrayList<String> getLocations();
 
-	public void setLocations(List<String> locations);
+	public void setLocations(ArrayList<String> locations);
 
 }

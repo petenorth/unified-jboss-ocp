@@ -2,7 +2,6 @@ package com.redhat.ukiservices.etl.model.common.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -34,13 +33,13 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	private String message;
 
 	@IndexedEmbedded
-	private List<String> locations;
+	private ArrayList<String> locations;
 
 	public DarwinDataModel() {
 		// Default constructor for ProtoBuf purposes
 	}
 
-	public DarwinDataModel(DarwinDataType ddType, String id, String message, List<String> locations) {
+	public DarwinDataModel(DarwinDataType ddType, String id, String message, ArrayList<String> locations) {
 		this.ddType = ddType;
 		this.id = id;
 		this.message = message;
@@ -84,7 +83,7 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 
 	@Override
 	@ProtoField(number = 4)
-	public List<String> getLocations() {
+	public ArrayList<String> getLocations() {
 
 		if (locations == null) {
 			locations = new ArrayList<String>();
@@ -94,7 +93,7 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	}
 
 	@Override
-	public void setLocations(List<String> locations) {
+	public void setLocations(ArrayList<String> locations) {
 		this.locations = locations;
 
 	}
