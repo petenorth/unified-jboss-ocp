@@ -42,6 +42,7 @@ public class NWRStompIngestRoute extends RouteBuilder {
 		from(createStompConsumer())
 			.id("ingestRoute")
 			.processRef("nwrDataFeedProcessor")
+			.log("${body}")
 			.inOnly("amq:queue:ingestdata");
 
 	}
