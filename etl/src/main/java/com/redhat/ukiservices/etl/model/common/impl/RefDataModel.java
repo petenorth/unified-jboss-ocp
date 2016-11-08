@@ -1,8 +1,7 @@
 package com.redhat.ukiservices.etl.model.common.impl;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -31,7 +30,7 @@ public class RefDataModel implements IRefData, Serializable {
 	private String code;
 
 	@IndexedEmbedded
-	private HashMap<String, String> alternateCodes;
+	private ArrayList<String> alternateCodes;
 
 	@Field(store = Store.YES, analyze = Analyze.YES)
 	private String value;
@@ -39,10 +38,17 @@ public class RefDataModel implements IRefData, Serializable {
 	public RefDataModel() {
 		// Default constructor for ProtoBuf purposes
 	}
-
+	
 	public RefDataModel(RefDataType rdType, String code, String value) {
 		this.rdType = rdType;
 		this.code = code;
+		this.value = value;
+	}
+
+	public RefDataModel(RefDataType rdType, String code, ArrayList<String> alternateCodes, String value) {
+		this.rdType = rdType;
+		this.code = code;
+		this.alternateCodes = alternateCodes;
 		this.value = value;
 	}
 
@@ -71,21 +77,22 @@ public class RefDataModel implements IRefData, Serializable {
 	}
 
 	@Override
-	public HashMap<String, String> getAlternateCodes() {
+	@ProtoField(number = 3)
+	public ArrayList<String> getAlternateCodes() {
 		if (alternateCodes == null) {
-			alternateCodes = new HashMap<>();
+			alternateCodes = new ArrayList<>();
 		}
 		return alternateCodes;
 	}
 
 	@Override
-	public void setAlternateCodes(HashMap<String, String> codes) {
-		this.alternateCodes = codes;
+	public void setAlternateCodes(ArrayList<String> alternateCodes) {
+		this.alternateCodes = alternateCodes;
 
 	}
 
 	@Override
-	@ProtoField(number = 3, required = true)
+	@ProtoField(number = 4, required = true)
 	public String getValue() {
 		return value;
 	}

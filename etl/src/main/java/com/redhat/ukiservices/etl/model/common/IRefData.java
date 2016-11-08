@@ -1,6 +1,6 @@
 package com.redhat.ukiservices.etl.model.common;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public interface IRefData {
 
@@ -12,9 +12,9 @@ public interface IRefData {
 
 	public void setCode(String code);
 
-	public HashMap<String, String> getAlternateCodes();
+	public ArrayList<String> getAlternateCodes();
 
-	public void setAlternateCodes(HashMap<String, String> code);
+	public void setAlternateCodes(ArrayList<String> alternateCodes);
 
 	public String getValue();
 

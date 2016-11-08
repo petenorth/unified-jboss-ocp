@@ -9,13 +9,10 @@ public enum RefDataType {
 	@ProtoEnumValue(number = 1, name = "LOCATION")
 	LOCATION, 
 	
-	@ProtoEnumValue(number = 2, name = "CRS")
-	CRS, 
-	
-	@ProtoEnumValue(number = 3, name = "CANCELLATIONREASON")
+	@ProtoEnumValue(number = 2, name = "CANCELLATIONREASON")
 	CANCELLATIONREASON, 
 	
-	@ProtoEnumValue(number = 4, name = "LATEREASON")
+	@ProtoEnumValue(number = 3, name = "LATEREASON")
 	LATEREASON;
 
 }

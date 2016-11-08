@@ -1,7 +1,6 @@
 package com.redhat.ukiservices.etl.process;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -77,9 +76,10 @@ public class RefDataProcessor implements Processor {
 			String value = loc.getLocname();
 			String crs = loc.getCrs();
 
+			ArrayList<String> alternateCodes = new ArrayList<>();
+			
 			if (crs != null) {
-				Map<String, String> codes = new HashMap<>();
-				codes.put(RefDataType.CRS.toString(), crs);
+				alternateCodes.add(crs);
 			}
 
 			RefDataModel locRef = new RefDataModel(type, code, value);
