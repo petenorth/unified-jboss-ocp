@@ -3,6 +3,7 @@ package com.redhat.ukiservices.ingest.route;
 import javax.inject.Inject;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
@@ -42,7 +43,7 @@ public class NWRStompIngestRoute extends RouteBuilder {
 		from(createStompConsumer())
 			.id("ingestRoute")
 			.processRef("nwrDataFeedProcessor")
-			.log("${body}")
+			.log(LoggingLevel.DEBUG, "${body}")
 			.inOnly("amq:queue:ingestdata");
 
 	}
