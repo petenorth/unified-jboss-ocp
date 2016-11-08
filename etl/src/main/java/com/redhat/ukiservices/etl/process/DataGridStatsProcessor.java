@@ -24,7 +24,7 @@ import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
 @Named("dgStatsProcessor")
 public class DataGridStatsProcessor implements Processor {
 
-	private static final String OUTPUT_LOG_MESSAGE = "There are %d locations stored. %n There are %d messages related to Birmingham New Street";
+	private static final String OUTPUT_LOG_MESSAGE = "Stats Update: %n There are %d locations stored. %n There are %d messages related to Birmingham New Street";
 
 	@Inject
 	@DarwinCache
@@ -60,7 +60,7 @@ public class DataGridStatsProcessor implements Processor {
 
 		QueryFactory qf = Search.getQueryFactory(darwinCache);
 
-		Query query = qf.from(DarwinDataModel.class).having(field).contains(term).toBuilder().build();
+		Query query = qf.from(DarwinDataModel.class).having(field).eq(term).toBuilder().build();
 
 		List results = query.list();
 
