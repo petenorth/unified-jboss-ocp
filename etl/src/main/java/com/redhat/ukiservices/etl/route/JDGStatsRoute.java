@@ -16,7 +16,7 @@ public class JDGStatsRoute extends RouteBuilder {
 	public void configure() throws Exception {
 		from(scheduler)
 		.id("jdgStatsRoute")
-		.processRef("jdgStatsBean")
+		.processRef("dgStatsProcessor")
 		.log("${body}");
 
 	}

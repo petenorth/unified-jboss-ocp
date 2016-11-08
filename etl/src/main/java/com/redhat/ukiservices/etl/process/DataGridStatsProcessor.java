@@ -3,6 +3,8 @@ package com.redhat.ukiservices.etl.process;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -18,17 +20,19 @@ import com.redhat.ukiservices.etl.model.common.RefDataType;
 import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
 import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
 
+@Singleton
+@Named("dgStatsProcessor")
 public class DataGridStatsProcessor implements Processor {
 
 	private static final String OUTPUT_LOG_MESSAGE = "There are %d locations stored. %n There are %d messages related to Birmingham New Street";
 
 	@Inject
 	@DarwinCache
-	private RemoteCache darwinCache;
+	private RemoteCache<String, DarwinDataModel> darwinCache;
 
 	@Inject
 	@RefDataCache
-	private RemoteCache refDataCache;
+	private RemoteCache<String, RefDataModel> refDataCache;
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
