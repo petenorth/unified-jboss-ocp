@@ -70,7 +70,7 @@ public class DarwinDataModel implements IDarwinData, Serializable {
 	}
 
 	@Override
-	@ProtoField(number = 3, required = true)
+	@ProtoField(number = 3)
 	public String getMessage() {
 		return message;
 	}
