@@ -2,8 +2,8 @@
 set -eo pipefail
 
 if [ x"$REFERENCE_DATA_DIRECTORY" != "x" ]; then
-    mkdir -p /deployments/ref
-    cp /tmp/src/src/main/resources/ref/* /deployments/ref/
+    mkdir -p $REFERENCE_DATA_DIRECTORY
+    cp /tmp/src/refdataloader/src/main/resources/ref/* $REFERENCE_DATA_DIRECTORY
 fi
 
 exec /usr/local/s2i/run
