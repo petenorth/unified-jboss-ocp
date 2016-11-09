@@ -163,52 +163,6 @@
 	    <module>etl</module>
 	    <module>refdataloader</module>
 	</modules>
-	<!--
-	<build>
-	    <plugins>
-	        <plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>hawt-app-maven-plugin</artifactId>
-				<version>${fabric8.version}</version>
-				<executions>
-					<execution>
-						<id>hawt-app</id>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<javaMainClass>org.apache.camel.cdi.Main</javaMainClass>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
-			<plugin>
-				<groupId>org.jolokia</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>${docker.maven.plugin.version}</version>
-				<configuration>
-					<images>
-						<image>
-							<name>${docker.image}</name>
-							<build>
-								<from>${docker.from}</from>
-								<assembly>
-									<basedir>/deployments</basedir>
-									<descriptorRef>hawt-app</descriptorRef>
-								</assembly>
-								<env>
-									<JAVA_LIB_DIR>/deployments/lib</JAVA_LIB_DIR>
-									<JAVA_MAIN_CLASS>org.apache.camel.cdi.Main</JAVA_MAIN_CLASS>
-								</env>
-							</build>
-						</image>
-					</images>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	
-	-->
 </project>
 
