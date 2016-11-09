@@ -15,11 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.RefDataCache;
-import com.redhat.ukiservices.etl.model.common.RefDataType;
-import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
-import com.redhat.ukiservices.etl.model.jaxb.ref.LocationRef;
-import com.redhat.ukiservices.etl.model.jaxb.ref.PportTimetableRef;
-import com.redhat.ukiservices.etl.model.jaxb.ref.Reason;
+import com.redhat.ukiservices.model.common.RefDataType;
+import com.redhat.ukiservices.model.common.impl.RefDataModel;
+import com.redhat.ukiservices.model.jaxb.ref.LocationRef;
+import com.redhat.ukiservices.model.jaxb.ref.PportTimetableRef;
+import com.redhat.ukiservices.model.jaxb.ref.Reason;
+
 
 @Singleton
 @Named("refDataProcessor")

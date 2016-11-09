@@ -1,7 +1,6 @@
 package com.redhat.ukiservices.etl.process;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,13 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.RefDataCache;
-import com.redhat.ukiservices.etl.model.common.DarwinDataType;
-import com.redhat.ukiservices.etl.model.common.RefDataType;
-import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
-import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
-import com.redhat.ukiservices.etl.model.jaxb.DisruptionReasonType;
-import com.redhat.ukiservices.etl.model.jaxb.TS;
-import com.redhat.ukiservices.etl.model.jaxb.TSLocation;
+import com.redhat.ukiservices.model.common.DarwinDataType;
+import com.redhat.ukiservices.model.common.RefDataType;
+import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
+import com.redhat.ukiservices.model.common.impl.RefDataModel;
+import com.redhat.ukiservices.model.jaxb.DisruptionReasonType;
+import com.redhat.ukiservices.model.jaxb.TS;
+import com.redhat.ukiservices.model.jaxb.TSLocation;
+
 
 @Singleton
 @Named("tsDataTransformer")

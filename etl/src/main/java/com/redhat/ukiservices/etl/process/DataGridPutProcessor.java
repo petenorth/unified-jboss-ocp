@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.redhat.ukiservices.etl.DarwinCache;
 import com.redhat.ukiservices.etl.EtlConstants;
-import com.redhat.ukiservices.etl.model.common.DarwinDataType;
-import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
+import com.redhat.ukiservices.model.common.DarwinDataType;
+import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
 
 @Singleton
 @Named("datagridPutProcessor")
@@ -35,7 +35,6 @@ public class DataGridPutProcessor implements Processor {
 		String key = generateDarwinDataKey(model.getDarwinDataType(), model.getId());
 		darwinCache.put(key, model);
 		LOG.info(String.format(DATA_PUT_MSG, model.toString()));
-		
 
 	}
 

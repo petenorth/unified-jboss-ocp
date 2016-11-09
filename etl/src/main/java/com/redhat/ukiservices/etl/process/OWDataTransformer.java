@@ -1,7 +1,6 @@
 package com.redhat.ukiservices.etl.process;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,14 +13,13 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.EtlConstants;
 import com.redhat.ukiservices.etl.RefDataCache;
-import com.redhat.ukiservices.etl.model.common.DarwinDataType;
-import com.redhat.ukiservices.etl.model.common.RefDataType;
-import com.redhat.ukiservices.etl.model.common.impl.DarwinDataModel;
-import com.redhat.ukiservices.etl.model.common.impl.RefDataModel;
-import com.redhat.ukiservices.etl.model.jaxb.StationMessage;
-import com.redhat.ukiservices.etl.model.jaxb.StationMessage.Station;
+import com.redhat.ukiservices.model.common.DarwinDataType;
+import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
+import com.redhat.ukiservices.model.common.impl.RefDataModel;
+import com.redhat.ukiservices.model.jaxb.StationMessage;
+import com.redhat.ukiservices.model.jaxb.StationMessage.Station;
+
 
 @Singleton
 @Named("owDataTransformer")
