@@ -1,4 +1,4 @@
-package com.redhat.ukiservices.etl;
+package com.redhat.ukiservices;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -12,6 +12,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
-public @interface DarwinCache {
+public @interface RefDataCache {
 
 }

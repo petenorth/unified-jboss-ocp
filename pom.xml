@@ -20,7 +20,7 @@
 		<fabric8.version>2.2.0.redhat-079</fabric8.version>
 		<docker.maven.plugin.version>0.13.6</docker.maven.plugin.version>
 		<infinispan.version>6.3.1.Final-redhat-1</infinispan.version>
-		<cache-api.version>1.0.0.redhat-1</cache-api.version>
+		<!-- <cache-api.version>1.0.0.redhat-1</cache-api.version> -->
 		<ukiservices.common.version>1.0-SNAPSHOT</ukiservices.common.version>
 	</properties>
 
@@ -161,6 +161,7 @@
 	    <module>common</module>
 	    <module>ingest</module>
 	    <module>etl</module>
+	    <module>refdataloader</module>
 	</modules>
 	
 </project>

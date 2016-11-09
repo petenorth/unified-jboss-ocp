@@ -7,8 +7,8 @@ import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 
-import com.redhat.ukiservices.etl.EtlConstants;
-import com.redhat.ukiservices.etl.factory.DataFormatFactory;
+import com.redhat.ukiservices.CommonConstants;
+import com.redhat.ukiservices.factory.DataFormatFactory;
 
 import io.fabric8.annotations.Alias;
 import io.fabric8.annotations.ServiceName;
@@ -38,10 +38,10 @@ public class NWRDataTransformationRoute extends RouteBuilder {
 			.unmarshal(dataFormatFactory.getJaxbDataFormat(JAXB_MODEL_CONTEXTPATH))
 			.split().method("pPortDataResponseSplitter", "splitDataResponse")
 			.choice()
-			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_TS))
+			.when(header(CommonConstants.TYPE_HEADER_KEY).isEqualTo(CommonConstants.TYPE_HEADER_TS))
 				.processRef("tsDataTransformer")
 				.processRef("datagridPutProcessor")
-			.when(header(EtlConstants.TYPE_HEADER_KEY).isEqualTo(EtlConstants.TYPE_HEADER_OW))
+			.when(header(CommonConstants.TYPE_HEADER_KEY).isEqualTo(CommonConstants.TYPE_HEADER_OW))
 				.processRef("owDataTransformer")
 				.processRef("datagridPutProcessor");
 

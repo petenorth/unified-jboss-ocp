@@ -13,7 +13,7 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.RefDataCache;
+import com.redhat.ukiservices.RefDataCache;
 import com.redhat.ukiservices.model.common.DarwinDataType;
 import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
 import com.redhat.ukiservices.model.common.impl.RefDataModel;

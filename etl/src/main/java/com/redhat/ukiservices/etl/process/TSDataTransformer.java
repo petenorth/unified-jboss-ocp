@@ -13,8 +13,8 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.EtlConstants;
-import com.redhat.ukiservices.etl.RefDataCache;
+import com.redhat.ukiservices.CommonConstants;
+import com.redhat.ukiservices.RefDataCache;
 import com.redhat.ukiservices.model.common.DarwinDataType;
 import com.redhat.ukiservices.model.common.RefDataType;
 import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
@@ -76,7 +76,7 @@ public class TSDataTransformer implements Processor {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(type.toString());
-		sb.append(EtlConstants.KEY_DELIMITER);
+		sb.append(CommonConstants.KEY_DELIMITER);
 		sb.append(code);
 
 		return sb.toString();

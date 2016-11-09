@@ -1,11 +1,10 @@
-package com.redhat.ukiservices.etl.factory;
+package com.redhat.ukiservices.factory;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -22,8 +21,6 @@ import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.DarwinCache;
-import com.redhat.ukiservices.etl.RefDataCache;
 import com.redhat.ukiservices.model.common.DarwinDataType;
 import com.redhat.ukiservices.model.common.RefDataType;
 import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
@@ -41,29 +38,9 @@ public class DataGridClientFactory {
 	@ServiceName("datagrid-app-hotrod")
 	private String dgCacheService;
 
-	@Inject
-	@ConfigProperty(name = "DARWIN_CACHE_NAME", defaultValue = "default")
-	private String darwinCacheName;
-
-	@Inject
-	@ConfigProperty(name = "REF_DATA_CACHE_NAME", defaultValue = "ref")
-	private String refDataCacheName;
-
 	private RemoteCacheManager cacheManager;
 
-	@Produces
-	@DarwinCache
-	public RemoteCache<String, DarwinDataModel> getDarwinCache() {
-		return cacheManager.getCache(darwinCacheName);
-	}
-
-	@Produces
-	@RefDataCache
-	public RemoteCache<String, RefDataModel> getRefDataCache() {
-		return cacheManager.getCache(refDataCacheName);
-	}
-
-	public RemoteCache<String, Object> getCache(String cacheName) {
+	public <T extends Object> RemoteCache<String, T> getCache(String cacheName) {
 		return cacheManager.getCache(cacheName);
 	}
 

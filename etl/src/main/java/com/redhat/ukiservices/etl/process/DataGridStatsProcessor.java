@@ -15,7 +15,7 @@ import org.infinispan.client.hotrod.Search;
 import org.infinispan.query.dsl.Query;
 import org.infinispan.query.dsl.QueryFactory;
 
-import com.redhat.ukiservices.etl.DarwinCache;
+import com.redhat.ukiservices.DarwinCache;
 import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
 
 

@@ -1,4 +1,4 @@
-package com.redhat.ukiservices.etl.route;
+package com.redhat.ukiservices.ref.route;
 
 import javax.inject.Inject;
 
@@ -6,9 +6,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
-import com.redhat.ukiservices.etl.factory.DataFormatFactory;
+import com.redhat.ukiservices.factory.DataFormatFactory;
 
-@ContextName("etlContext")
+
+@ContextName("refContext")
 public class NWRRefDataLoaderRoute extends RouteBuilder {
 
 	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.etl.model.jaxb.ref";

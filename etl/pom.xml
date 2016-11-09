@@ -67,7 +67,6 @@
 		<dependency>
 			<groupId>javax.cache</groupId>
 			<artifactId>cache-api</artifactId>
-			<version>${cache-api.version}</version>
 		</dependency>
 
 		<!-- Import the Infinispan client hotrod -->

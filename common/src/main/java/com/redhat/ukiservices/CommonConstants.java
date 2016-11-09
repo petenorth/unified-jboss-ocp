@@ -1,6 +1,6 @@
-package com.redhat.ukiservices.etl;
+package com.redhat.ukiservices;
 
-public interface EtlConstants {
+public interface CommonConstants {
 
 	static final String TYPE_HEADER_KEY = "pport.ur.object";
 	static final String TYPE_HEADER_TS = "TS";

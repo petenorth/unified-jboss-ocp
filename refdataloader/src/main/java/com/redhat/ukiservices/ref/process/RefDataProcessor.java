@@ -1,4 +1,4 @@
-package com.redhat.ukiservices.etl.process;
+package com.redhat.ukiservices.ref.process;
 
 import java.util.ArrayList;
 
@@ -13,14 +13,13 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.EtlConstants;
-import com.redhat.ukiservices.etl.RefDataCache;
+import com.redhat.ukiservices.CommonConstants;
+import com.redhat.ukiservices.RefDataCache;
 import com.redhat.ukiservices.model.common.RefDataType;
 import com.redhat.ukiservices.model.common.impl.RefDataModel;
 import com.redhat.ukiservices.model.jaxb.ref.LocationRef;
 import com.redhat.ukiservices.model.jaxb.ref.PportTimetableRef;
 import com.redhat.ukiservices.model.jaxb.ref.Reason;
-
 
 @Singleton
 @Named("refDataProcessor")
@@ -78,7 +77,7 @@ public class RefDataProcessor implements Processor {
 			String crs = loc.getCrs();
 
 			ArrayList<String> alternateCodes = new ArrayList<>();
-			
+
 			if (crs != null) {
 				alternateCodes.add(crs);
 			}
@@ -100,7 +99,7 @@ public class RefDataProcessor implements Processor {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(type.toString());
-		sb.append(EtlConstants.KEY_DELIMITER);
+		sb.append(CommonConstants.KEY_DELIMITER);
 		sb.append(code);
 
 		return sb.toString();

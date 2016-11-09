@@ -1,4 +1,4 @@
-package com.redhat.ukiservices.etl.factory;
+package com.redhat.ukiservices.factory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

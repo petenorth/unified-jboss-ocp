@@ -13,11 +13,11 @@ import org.apache.camel.impl.DefaultMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.redhat.ukiservices.etl.EtlConstants;
+import com.redhat.ukiservices.CommonConstants;
 import com.redhat.ukiservices.model.jaxb.Pport;
+import com.redhat.ukiservices.model.jaxb.Pport.UR;
 import com.redhat.ukiservices.model.jaxb.StationMessage;
 import com.redhat.ukiservices.model.jaxb.TS;
-import com.redhat.ukiservices.model.jaxb.Pport.UR;
 
 @Singleton
 @Named("pPortDataResponseSplitter")
@@ -47,10 +47,10 @@ public class PportDataResponseSplitter {
 
 				for (TS ts : ur.getTS()) {
 					Map<String, Object> headers = new HashMap<>();
-					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_TS);
+					headers.put(CommonConstants.TYPE_HEADER_KEY, CommonConstants.TYPE_HEADER_TS);
 
 					dataResponses.add(createMessage(ts, headers));
-					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_TS, ts.getUid()));
+					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, CommonConstants.TYPE_HEADER_TS, ts.getUid()));
 				}
 			}
 
@@ -58,10 +58,10 @@ public class PportDataResponseSplitter {
 
 				for (StationMessage ow : ur.getOW()) {
 					Map<String, Object> headers = new HashMap<>();
-					headers.put(EtlConstants.TYPE_HEADER_KEY, EtlConstants.TYPE_HEADER_OW);
+					headers.put(CommonConstants.TYPE_HEADER_KEY, CommonConstants.TYPE_HEADER_OW);
 
 					dataResponses.add(createMessage(ow, headers));
-					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, EtlConstants.TYPE_HEADER_OW,
+					LOG.debug(String.format(PAYLOAD_LOG_MESSAGE, CommonConstants.TYPE_HEADER_OW,
 							String.valueOf(ow.getId())));
 				}
 			}
