@@ -12,7 +12,7 @@ import com.redhat.ukiservices.factory.DataFormatFactory;
 @ContextName("refContext")
 public class NWRRefDataLoaderRoute extends RouteBuilder {
 
-	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.etl.model.jaxb.ref";
+	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.model.jaxb.ref";
 
 	@Inject
 	@ConfigProperty(name = "REFERENCE_DATA_DIRECTORY", defaultValue = "src/main/resources/ref")

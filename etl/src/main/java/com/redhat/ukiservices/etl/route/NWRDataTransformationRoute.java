@@ -16,7 +16,7 @@ import io.fabric8.annotations.ServiceName;
 @ContextName("etlContext")
 public class NWRDataTransformationRoute extends RouteBuilder {
 
-	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.etl.model.jaxb";
+	private static final String JAXB_MODEL_CONTEXTPATH = "com.redhat.ukiservices.model.jaxb";
 
 	@Inject
 	@ServiceName("broker-amq-tcp")
