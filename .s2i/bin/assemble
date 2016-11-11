@@ -2,6 +2,7 @@
 set -eo pipefail
 
 echo "Working Directory: `pwd`"
+echo $S2I_SOURCE_DIR
 echo
 echo "======================================================================================"
 export
