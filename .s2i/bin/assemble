@@ -1,19 +1,16 @@
 #!/bin/bash
 set -eo pipefail
 
-echo "Working Directory: `pwd`"
-echo $S2I_SOURCE_DIR
-echo
-echo "======================================================================================"
-export
-echo "======================================================================================"
-echo
+S2I_SCRIPT_DIR="/usr/local/s2i"
+
+source $S2I_SCRIPT_DIR/s2i-setup
+
 echo "Checking for module-specific S2I scripts..."
 
-if [ -f $MODULE_DIR/.s2i/bin/run ]; then
+if [ -f $S2I_SOURCE_DIR/$MODULE_DIR/.s2i/bin/run ]; then
 
    echo "Custom run script found. Using this instead of the default."
-   cp $MODULE_DIR/.s2i/bin/run .
+   cp $S2I_SOURCE_DIR/$MODULE_DIR/.s2i/bin/run .
 
 else
 
@@ -21,15 +18,15 @@ else
 
 fi
 
-if [ -f $MODULE_DIR/.s2i/bin/assemble ]; then
+if [ -f $S2I_SOURCE_DIR/$MODULE_DIR/.s2i/bin/assemble ]; then
 
    echo "Custom assemble script found. Using this instead of the default."
-   $MODULE_DIR/.s2i/bin/assemble
+   $S2I_SOURCE_DIR/$MODULE_DIR/.s2i/bin/assemble
 
 else
 
    echo "Using default assemble script"
-   /usr/local/s2i/assemble
+   $S2I_SCRIPT_DIR/assemble
 
 fi
 
