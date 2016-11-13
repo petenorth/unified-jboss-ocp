@@ -159,78 +159,93 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<inherited>true</inherited>
+				<configuration>
+					<excludes>
+						<exclude>**/*KT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8.version}</version>
+				<executions>
+					<execution>
+						<id>json</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>json</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>attach</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>hawt-app-maven-plugin</artifactId>
+				<version>${fabric8.version}</version>
+				<executions>
+					<execution>
+						<id>hawt-app</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<configuration>
+							<javaMainClass>org.apache.camel.cdi.Main</javaMainClass>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jolokia</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${docker.maven.plugin.version}</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.image}</name>
+							<build>
+								<from>${docker.from}</from>
+								<assembly>
+									<basedir>/deployments</basedir>
+									<descriptorRef>hawt-app</descriptorRef>
+								</assembly>
+								<env>
+									<JAVA_LIB_DIR>/deployments/lib</JAVA_LIB_DIR>
+									<JAVA_MAIN_CLASS>org.apache.camel.cdi.Main</JAVA_MAIN_CLASS>
+								</env>
+							</build>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+
+			<!-- allows the route to be ran via 'mvn exec:java' -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<configuration>
+					<mainClass>org.apache.camel.cdi.Main</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-	<!-- Default sample commands: mvn -Pf8-build ... build Docker images and 
-		create OpenShift deployment configs mvn -Pf8-deploy ... f8-build + push to 
-		Docker registry + applying deployment config to OpenShift mvn -Pf8-local-deploy 
-		... deployment for a single node setup without pushing to a registry For 
-		individual goal usage please consult the fabric8 documentation -->
-	<profiles>
-		<profile>
-			<id>generate-jaxb</id>
-			<build>
-				<defaultGoal>clean compile</defaultGoal>
-
-				<pluginManagement>
-					<plugins>
-						<!-- If we e.g. execute on JDK 1.8, we should compile for Java 8 to 
-							get the same (or higher) JAXB API version as used during the xjc execution. -->
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-compiler-plugin</artifactId>
-							<configuration>
-								<source>1.8</source>
-								<target>1.8</target>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>jaxb2-maven-plugin</artifactId>
-						<version>2.2</version>
-						<executions>
-							<execution>
-								<id>model</id>
-								<goals>
-									<goal>xjc</goal>
-								</goals>
-								<configuration>
-									<packageName>com.redhat.ukiservices.etl.model.jaxb</packageName>
-									<clearOutputDir>true</clearOutputDir>
-									<outputDirectory>${project.build.directory}/generated-sources/jaxb/model</outputDirectory>
-									<sources>
-										<source>src/main/resources/schemas/rttiPPTSchema_v12.xsd</source>
-									</sources>
-									<laxSchemaValidation>true</laxSchemaValidation>
-								</configuration>
-							</execution>
-							<execution>
-								<id>ref</id>
-								<goals>
-									<goal>xjc</goal>
-								</goals>
-								<configuration>
-									<packageName>com.redhat.ukiservices.etl.model.jaxb.ref</packageName>
-									<clearOutputDir>true</clearOutputDir>
-									<outputDirectory>${project.build.directory}/generated-sources/jaxb/ref</outputDirectory>
-									<sources>
-										<source>src/main/resources/schemas/ref/rttiCTTReferenceSchema_v3.xsd</source>
-									</sources>
-									<laxSchemaValidation>true</laxSchemaValidation>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
