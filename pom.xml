@@ -162,6 +162,7 @@
 	    <module>ingest</module>
 	    <module>etl</module>
 	    <module>refdataloader</module>
+	    <module>jdgstats</module>
 	</modules>
 
 </project>

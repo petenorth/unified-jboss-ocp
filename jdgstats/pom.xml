@@ -10,12 +10,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>ref-data-loader</artifactId>
+	<artifactId>jdgstats</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Red Hat :: UKI Services :: Reference Data Loader Module</name>
-	<description>Camel route taking an XML input of reference data, and injecting it into JDG</description>
+	<description>Camel route for searching JDG for a keyword or phrase, and listing occurences</description>
 
 	<dependencies>
 
