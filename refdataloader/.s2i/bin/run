@@ -1,15 +1,13 @@
 #!/bin/bash
 set -eo pipefail
+
 echo
+echo "Using module-specific S2I script"
 echo
-echo "RUNNING THE BLOODY SCRIPT"
-echo
-echo
-set -x
+
 if [ x"$REFERENCE_DATA_DIRECTORY" != "x" ]; then
     mkdir -p $REFERENCE_DATA_DIRECTORY
     cp /tmp/src/refdataloader/src/main/resources/ref/* $REFERENCE_DATA_DIRECTORY
 fi
-set +x
 
 exec /usr/local/s2i/run
