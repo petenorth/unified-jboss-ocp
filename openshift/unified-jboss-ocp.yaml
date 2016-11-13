@@ -5,167 +5,286 @@ metadata:
   name: unified-jboss-ocp
 objects:
 - apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: The broker's AMQP port.
-      service.alpha.openshift.io/dependencies: '[{"name":"broker-amq-tcp","namespace":"","kind":"Service"}]'
-    creationTimestamp: null
-    labels:
-      app: amq62-basic
-      application: broker
-      template: amq62-basic
-      xpaas: 1.3.1
-    name: broker-amq-amqp
-  spec:
-    ports:
-    - port: 5672
-      protocol: TCP
-      targetPort: 5672
-    selector:
-      deploymentConfig: broker-amq
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: The broker's OpenWire port.
-    creationTimestamp: null
-    labels:
-      app: amq62-basic
-      application: broker
-      template: amq62-basic
-      xpaas: 1.3.1
-    name: broker-amq-tcp
-  spec:
-    ports:
-    - port: 61616
-      protocol: TCP
-      targetPort: 61616
-    selector:
-      deploymentConfig: broker-amq
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: The web server's HTTP port.
-      service.alpha.openshift.io/dependencies: '[{"name":"datagrid-app-hotrod","namespace":"","kind":"Service"},{"name":"datagrid-app-memcached","namespace":"","kind":"Service"}]'
-    creationTimestamp: null
-    labels:
-      app: datagrid65-basic
-      application: datagrid-app
-      delete: jdg
-      template: datagrid65-basic
-      xpaas: 1.2.0
-    name: datagrid-app
-  spec:
-    ports:
-    - port: 8080
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      deploymentConfig: datagrid-app
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: Hot Rod service for clustered applications.
-    creationTimestamp: null
-    labels:
-      app: datagrid65-basic
-      application: datagrid-app
-      delete: jdg
-      template: datagrid65-basic
-      xpaas: 1.2.0
-    name: datagrid-app-hotrod
-  spec:
-    ports:
-    - port: 11333
-      protocol: TCP
-      targetPort: 11333
-    selector:
-      deploymentConfig: datagrid-app
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      description: Memcached service for clustered applications.
-    creationTimestamp: null
-    labels:
-      app: datagrid65-basic
-      application: datagrid-app
-      delete: jdg
-      template: datagrid65-basic
-      xpaas: 1.2.0
-    name: datagrid-app-memcached
-  spec:
-    ports:
-    - port: 11211
-      protocol: TCP
-      targetPort: 11211
-    selector:
-      deploymentConfig: datagrid-app
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
+  kind: BuildConfig
   metadata:
     annotations:
       openshift.io/generated-by: OpenShiftWebConsole
     creationTimestamp: null
     labels:
       app: etl
+      delete: appdev
     name: etl
   spec:
-    ports:
-    - name: 8778-tcp
-      port: 8778
-      protocol: TCP
-      targetPort: 8778
-    selector:
-      deploymentconfig: etl
-    sessionAffinity: None
-    type: ClusterIP
+    output:
+      to:
+        kind: ImageStreamTag
+        name: etl:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_ARGS_APPEND
+          value: -pl etl --also-make
+        - name: ARTIFACT_DIR
+          value: etl/target/
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - generic:
+        secret: 5f36d4a0fb372c81
+      type: Generic
+    - github:
+        secret: 9aa0a9fe3f71cc11
+      type: GitHub
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
   status:
-    loadBalancer: {}
+    lastVersion: 0
 - apiVersion: v1
-  kind: Service
+  kind: BuildConfig
   metadata:
     annotations:
       openshift.io/generated-by: OpenShiftWebConsole
     creationTimestamp: null
     labels:
       app: ingest
+      delete: appdev
     name: ingest
   spec:
-    ports:
-    - name: 8778-tcp
-      port: 8778
-      protocol: TCP
-      targetPort: 8778
-    selector:
-      deploymentconfig: ingest
-    sessionAffinity: None
-    type: ClusterIP
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ingest:latest
+        namespace: appdev
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_ARGS_APPEND
+          value: -pl ingest --also-make
+        - name: ARTIFACT_DIR
+          value: ingest/target
+        - name: MODULE_DIR
+          value: ingest
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: e1389910db65e33f
+      type: GitHub
+    - generic:
+        secret: 0d01fb39280420ab
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
   status:
-    loadBalancer: {}
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: ref
+      delete: appdev
+    name: ref
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ref:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_ARGS_APPEND
+          value: -pl refdataloader --also-make
+        - name: ARTIFACT_DIR
+          value: refdataloader/target/
+        - name: MODULE_DIR
+          value: refdataloader/
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - generic:
+        secret: 9c048ba01c1ab7b6
+      type: Generic
+    - github:
+        secret: ad9465d50d59ff32
+      type: GitHub
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: stats
+      delete: appdev
+    name: stats
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: stats:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/benemon/unified-jboss-ocp
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_ARGS_APPEND
+          value: -pl jdgstats --also-make
+        - name: ARTIFACT_DIR
+          value: jdgstats/target/
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:1.0
+          namespace: openshift
+      type: Source
+    triggers:
+    - generic:
+        secret: 43383b038199c1d7
+      type: Generic
+    - github:
+        secret: 8310183cac7c5b35
+      type: GitHub
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: etl
+      delete: appdev
+    name: etl
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: 172.30.248.101:5000/appdev/etl:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ingest
+      delete: appdev
+    name: ingest
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: 172.30.248.101:5000/appdev/ingest:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+    name: ref
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: 172.30.248.101:5000/appdev/ref:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: stats
+      delete: appdev
+    name: stats
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: 172.30.248.101:5000/appdev/stats:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+  status:
+    dockerImageRepository: ""
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -174,6 +293,7 @@ objects:
     labels:
       app: amq62-basic
       application: broker
+      delete: amq
       template: amq62-basic
       xpaas: 1.3.1
     name: broker-amq
@@ -219,7 +339,7 @@ objects:
                 apiVersion: v1
                 fieldPath: metadata.namespace
           - name: AMQ_STORAGE_USAGE_LIMIT
-            value: 100 gb
+            value: 1 gb
           image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
           imagePullPolicy: Always
           name: broker-amq
@@ -276,7 +396,7 @@ objects:
   kind: DeploymentConfig
   metadata:
     creationTimestamp: null
-    generation: 8
+    generation: 2
     labels:
       app: datagrid65-basic
       application: datagrid-app
@@ -317,19 +437,14 @@ objects:
           - name: INFINISPAN_CONNECTORS
             value: hotrod,rest
           - name: CACHE_NAMES
-            value: default,ref,darwindata
+            value: ref,darwindata
           - name: ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH
           - name: HOTROD_SERVICE_NAME
             value: datagrid-app-hotrod
           - name: MEMCACHED_CACHE
-            value: default
           - name: REST_SECURITY_DOMAIN
           - name: JGROUPS_CLUSTER_PASSWORD
-            value: fAGkPvYy
-          - name: REF_CACHE_TYPE
-            value: replicated
-          - name: DARWINDATA_CACHE_TYPE
-            value: replicated
+            value: iarw6keV
           image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe
           imagePullPolicy: Always
           livenessProbe:
@@ -389,7 +504,7 @@ objects:
     - type: ConfigChange
   status:
     availableReplicas: 1
-    observedGeneration: 8
+    observedGeneration: 2
     replicas: 1
     updatedReplicas: 1
 - apiVersion: v1
@@ -398,9 +513,10 @@ objects:
     annotations:
       openshift.io/generated-by: OpenShiftWebConsole
     creationTimestamp: null
-    generation: 38
+    generation: 5
     labels:
       app: etl
+      delete: appdev
     name: etl
   spec:
     replicas: 1
@@ -420,21 +536,20 @@ objects:
         creationTimestamp: null
         labels:
           app: etl
+          delete: appdev
           deploymentconfig: etl
       spec:
         containers:
         - env:
-          - name: BROKER_AMQ_TCP_USERNAME
-            value: redhat
-          - name: BROKER_AMQ_TCP_PASSWORD
-            value: redhat
-          - name: REFERENCE_DATA_DIRECTORY
-            value: /deployments/ref/
           - name: DARWIN_CACHE_NAME
             value: darwindata
           - name: REF_DATA_CACHE_NAME
             value: ref
-          image: 172.30.237.8:5000/appdev/etl@sha256:6e14dda34fadf2af77c2ceda346459cf26ce3dbda0a6d5dc39f3a3e514e9bee5
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
           imagePullPolicy: Always
           name: etl
           ports:
@@ -461,7 +576,7 @@ objects:
     - type: ConfigChange
   status:
     availableReplicas: 1
-    observedGeneration: 38
+    observedGeneration: 5
     replicas: 1
     updatedReplicas: 1
 - apiVersion: v1
@@ -470,9 +585,10 @@ objects:
     annotations:
       openshift.io/generated-by: OpenShiftWebConsole
     creationTimestamp: null
-    generation: 19
+    generation: 5
     labels:
       app: ingest
+      delete: appdev
     name: ingest
   spec:
     replicas: 1
@@ -492,6 +608,7 @@ objects:
         creationTimestamp: null
         labels:
           app: ingest
+          delete: appdev
           deploymentconfig: ingest
       spec:
         containers:
@@ -500,14 +617,20 @@ objects:
             value: redhat
           - name: BROKER_AMQ_TCP_PASSWORD
             value: redhat
-          image: 172.30.237.8:5000/appdev/ingest@sha256:2cdceb1e8140076fdea5e3bb0ee6df35fd40aacce79474eb9a4bfc00d90dbdda
+          image: 172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781
           imagePullPolicy: Always
           name: ingest
           ports:
           - containerPort: 8778
             name: jolokia
             protocol: TCP
-          resources: {}
+          resources:
+            limits:
+              cpu: 500m
+              memory: 384Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           terminationMessagePath: /dev/termination-log
         dnsPolicy: ClusterFirst
         restartPolicy: Always
@@ -527,94 +650,1062 @@ objects:
     - type: ConfigChange
   status:
     availableReplicas: 1
-    observedGeneration: 19
+    observedGeneration: 5
     replicas: 1
     updatedReplicas: 1
 - apiVersion: v1
-  kind: BuildConfig
+  kind: DeploymentConfig
   metadata:
     annotations:
       openshift.io/generated-by: OpenShiftWebConsole
     creationTimestamp: null
+    generation: 9
+    labels:
+      app: ref
+      delete: appdev
+    name: ref
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: ref
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ref
+        from:
+          kind: ImageStreamTag
+          name: ref:latest
+          namespace: appdev
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 9
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 3
+    labels:
+      app: stats
+      delete: appdev
+    name: stats
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: stats
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: stats
+          delete: appdev
+          deploymentconfig: stats
+      spec:
+        containers:
+        - env:
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          image: 172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971
+          imagePullPolicy: Always
+          name: stats
+          ports:
+          - containerPort: 8778
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - stats
+        from:
+          kind: ImageStreamTag
+          name: stats:latest
+          namespace: appdev
+      type: ImageChange
+    - type: ConfigChange
+  status:
+    availableReplicas: 1
+    observedGeneration: 3
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: broker-amq-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: broker-amq
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"broker-amq","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/broker-amq","uid":"e6496dff-a82b-11e6-8dd1-525400b44ac5","resourceVersion":"1856","generation":2,"creationTimestamp":"2016-11-11T16:28:38Z","labels":{"app":"amq62-basic","application":"broker","delete":"amq","template":"amq62-basic","xpaas":"1.3.1"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":0},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["broker-amq"],"from":{"kind":"ImageStreamTag","namespace":"openshift","name":"jboss-amq-62:1.3"},"lastTriggeredImage":"registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentConfig":"broker-amq"},"template":{"metadata":{"name":"broker-amq","creationTimestamp":null,"labels":{"application":"broker","deploymentConfig":"broker-amq"}},"spec":{"containers":[{"name":"broker-amq","image":"registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"},{"name":"amqp","containerPort":5672,"protocol":"TCP"},{"name":"mqtt","containerPort":1883,"protocol":"TCP"},{"name":"stomp","containerPort":61613,"protocol":"TCP"},{"name":"tcp","containerPort":61616,"protocol":"TCP"}],"env":[{"name":"AMQ_USER","value":"redhat"},{"name":"AMQ_PASSWORD","value":"redhat"},{"name":"AMQ_TRANSPORTS","value":"openwire"},{"name":"AMQ_QUEUES"},{"name":"AMQ_TOPICS"},{"name":"MQ_SERIALIZABLE_PACKAGES"},{"name":"AMQ_MESH_DISCOVERY_TYPE","value":"kube"},{"name":"AMQ_MESH_SERVICE_NAME","value":"broker-amq-tcp"},{"name":"AMQ_MESH_SERVICE_NAMESPACE","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}},{"name":"AMQ_STORAGE_USAGE_LIMIT","value":"1 gb"}],"resources":{},"readinessProbe":{"exec":{"command":["/bin/bash","-c","/opt/amq/bin/readinessProbe.sh"]},"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":60,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":1,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"openshift","name":"jboss-amq-62:1.3"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: amq62-basic
+      application: broker
+      delete: amq
+      openshift.io/deployment-config.name: broker-amq
+      template: amq62-basic
+      xpaas: 1.3.1
+    name: broker-amq-1
+  spec:
+    replicas: 1
+    selector:
+      deployment: broker-amq-1
+      deploymentConfig: broker-amq
+      deploymentconfig: broker-amq
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: broker-amq
+          openshift.io/deployment.name: broker-amq-1
+        creationTimestamp: null
+        labels:
+          application: broker
+          deployment: broker-amq-1
+          deploymentConfig: broker-amq
+          deploymentconfig: broker-amq
+      spec:
+        containers:
+        - env:
+          - name: AMQ_USER
+            value: redhat
+          - name: AMQ_PASSWORD
+            value: redhat
+          - name: AMQ_TRANSPORTS
+            value: openwire
+          - name: AMQ_QUEUES
+          - name: AMQ_TOPICS
+          - name: MQ_SERIALIZABLE_PACKAGES
+          - name: AMQ_MESH_DISCOVERY_TYPE
+            value: kube
+          - name: AMQ_MESH_SERVICE_NAME
+            value: broker-amq-tcp
+          - name: AMQ_MESH_SERVICE_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: AMQ_STORAGE_USAGE_LIMIT
+            value: 1 gb
+          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
+          imagePullPolicy: Always
+          name: broker-amq
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 5672
+            name: amqp
+            protocol: TCP
+          - containerPort: 1883
+            name: mqtt
+            protocol: TCP
+          - containerPort: 61613
+            name: stomp
+            protocol: TCP
+          - containerPort: 61616
+            name: tcp
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/amq/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: datagrid-app-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: datagrid-app
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"datagrid-app","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/datagrid-app","uid":"19ffdaf6-a82c-11e6-8dd1-525400b44ac5","resourceVersion":"1931","generation":2,"creationTimestamp":"2016-11-11T16:30:04Z","labels":{"app":"datagrid65-basic","application":"datagrid-app","delete":"jdg","template":"datagrid65-basic","xpaas":"1.2.0"}},"spec":{"strategy":{"type":"Recreate","recreateParams":{"timeoutSeconds":600},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["datagrid-app"],"from":{"kind":"ImageStreamTag","namespace":"openshift","name":"jboss-datagrid65-openshift:1.2"},"lastTriggeredImage":"registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentConfig":"datagrid-app"},"template":{"metadata":{"name":"datagrid-app","creationTimestamp":null,"labels":{"application":"datagrid-app","deploymentConfig":"datagrid-app"}},"spec":{"containers":[{"name":"datagrid-app","image":"registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"},{"name":"http","containerPort":8080,"protocol":"TCP"},{"name":"ping","containerPort":8888,"protocol":"TCP"},{"name":"memcached","containerPort":11211,"protocol":"TCP"},{"name":"hotrod","containerPort":11222,"protocol":"TCP"}],"env":[{"name":"USERNAME","value":"redhat"},{"name":"PASSWORD","value":"S3cur1ty!"},{"name":"OPENSHIFT_KUBE_PING_LABELS","value":"application=datagrid-app"},{"name":"OPENSHIFT_KUBE_PING_NAMESPACE","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}},{"name":"INFINISPAN_CONNECTORS","value":"hotrod,rest"},{"name":"CACHE_NAMES","value":"ref,darwindata"},{"name":"ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH"},{"name":"HOTROD_SERVICE_NAME","value":"datagrid-app-hotrod"},{"name":"MEMCACHED_CACHE"},{"name":"REST_SECURITY_DOMAIN"},{"name":"JGROUPS_CLUSTER_PASSWORD","value":"iarw6keV"}],"resources":{},"livenessProbe":{"exec":{"command":["/bin/bash","-c","/opt/datagrid/bin/livenessProbe.sh"]},"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"exec":{"command":["/bin/bash","-c","/opt/datagrid/bin/readinessProbe.sh"]},"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":60,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":1,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"openshift","name":"jboss-datagrid65-openshift:1.2"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      openshift.io/deployment-config.name: datagrid-app
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app-1
+  spec:
+    replicas: 1
+    selector:
+      deployment: datagrid-app-1
+      deploymentConfig: datagrid-app
+      deploymentconfig: datagrid-app
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: datagrid-app
+          openshift.io/deployment.name: datagrid-app-1
+        creationTimestamp: null
+        labels:
+          application: datagrid-app
+          deployment: datagrid-app-1
+          deploymentConfig: datagrid-app
+          deploymentconfig: datagrid-app
+      spec:
+        containers:
+        - env:
+          - name: USERNAME
+            value: redhat
+          - name: PASSWORD
+            value: S3cur1ty!
+          - name: OPENSHIFT_KUBE_PING_LABELS
+            value: application=datagrid-app
+          - name: OPENSHIFT_KUBE_PING_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: INFINISPAN_CONNECTORS
+            value: hotrod,rest
+          - name: CACHE_NAMES
+            value: ref,darwindata
+          - name: ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH
+          - name: HOTROD_SERVICE_NAME
+            value: datagrid-app-hotrod
+          - name: MEMCACHED_CACHE
+          - name: REST_SECURITY_DOMAIN
+          - name: JGROUPS_CLUSTER_PASSWORD
+            value: iarw6keV
+          image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/datagrid/bin/livenessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: datagrid-app
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 8888
+            name: ping
+            protocol: TCP
+          - containerPort: 11211
+            name: memcached
+            protocol: TCP
+          - containerPort: 11222
+            name: hotrod
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - /opt/datagrid/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: etl-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: etl
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"etl","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/etl","uid":"97cbaaae-a9d2-11e6-8dd1-525400b44ac5","resourceVersion":"5429","generation":3,"creationTimestamp":"2016-11-13T18:54:23Z","labels":{"app":"etl","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["etl"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"etl:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"etl"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"etl","delete":"appdev","deploymentconfig":"etl"}},"spec":{"containers":[{"name":"etl","image":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"DARWIN_CACHE_NAME","value":"darwindata"},{"name":"REF_DATA_CACHE_NAME","value":"ref"}],"resources":{"limits":{"cpu":"1","memory":"512Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":3,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"etl:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
     labels:
       app: etl
-    name: etl
+      delete: appdev
+      openshift.io/deployment-config.name: etl
+    name: etl-1
   spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: etl:latest
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
-    source:
-      contextDir: etl
-      git:
-        ref: master
-        uri: https://github.com/benemon/unified-jboss-ocp
-      type: Git
-    strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: fis-java-openshift:1.0
-          namespace: openshift
-      type: Source
-    triggers:
-    - generic:
-        secret: 2e90117a350d7e5c
-      type: Generic
-    - github:
-        secret: c20c612fcbda5d61
-      type: GitHub
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
+    replicas: 0
+    selector:
+      deployment: etl-1
+      deploymentconfig: etl
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: etl
+          openshift.io/deployment.name: etl-1
+        creationTimestamp: null
+        labels:
+          app: etl
+          delete: appdev
+          deployment: etl-1
+          deploymentconfig: etl
+      spec:
+        containers:
+        - env:
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
+          imagePullPolicy: Always
+          name: etl
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
   status:
-    lastVersion: 0
+    replicas: 0
 - apiVersion: v1
-  kind: BuildConfig
+  kind: ReplicationController
   metadata:
     annotations:
-      openshift.io/generated-by: OpenShiftWebConsole
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: etl-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: etl
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by a config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"etl","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/etl","uid":"97cbaaae-a9d2-11e6-8dd1-525400b44ac5","resourceVersion":"5484","generation":4,"creationTimestamp":"2016-11-13T18:54:23Z","labels":{"app":"etl","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["etl"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"etl:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"etl"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"etl","delete":"appdev","deploymentconfig":"etl"}},"spec":{"containers":[{"name":"etl","image":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"DARWIN_CACHE_NAME","value":"darwindata"},{"name":"REF_DATA_CACHE_NAME","value":"ref"},{"name":"BROKER_AMQ_TCP_USERNAME","value":"redhat"},{"name":"BROKER_AMQ_TCP_PASSWORD","value":"redhat"}],"resources":{"limits":{"cpu":"1","memory":"512Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":2,"observedGeneration":4,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by a config change","causes":[{"type":"ConfigChange"}]}}}
     creationTimestamp: null
+    generation: 1
+    labels:
+      app: etl
+      delete: appdev
+      openshift.io/deployment-config.name: etl
+    name: etl-2
+  spec:
+    replicas: 0
+    selector:
+      deployment: etl-2
+      deploymentconfig: etl
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: etl
+          openshift.io/deployment.name: etl-2
+        creationTimestamp: null
+        labels:
+          app: etl
+          delete: appdev
+          deployment: etl-2
+          deploymentconfig: etl
+      spec:
+        containers:
+        - env:
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
+          imagePullPolicy: Always
+          name: etl
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: etl-3-deploy
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: etl
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by a config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"etl","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/etl","uid":"97cbaaae-a9d2-11e6-8dd1-525400b44ac5","resourceVersion":"5568","generation":5,"creationTimestamp":"2016-11-13T18:54:23Z","labels":{"app":"etl","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["etl"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"etl:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"etl"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"etl","delete":"appdev","deploymentconfig":"etl"}},"spec":{"containers":[{"name":"etl","image":"172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"DARWIN_CACHE_NAME","value":"darwindata"},{"name":"REF_DATA_CACHE_NAME","value":"ref"},{"name":"BROKER_AMQ_TCP_USERNAME","value":"redhat"},{"name":"BROKER_AMQ_TCP_PASSWORD","value":"redhat"}],"resources":{},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":3,"observedGeneration":5,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by a config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: etl
+      delete: appdev
+      openshift.io/deployment-config.name: etl
+    name: etl-3
+  spec:
+    replicas: 1
+    selector:
+      deployment: etl-3
+      deploymentconfig: etl
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "3"
+          openshift.io/deployment-config.name: etl
+          openshift.io/deployment.name: etl-3
+        creationTimestamp: null
+        labels:
+          app: etl
+          delete: appdev
+          deployment: etl-3
+          deploymentconfig: etl
+      spec:
+        containers:
+        - env:
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
+          imagePullPolicy: Always
+          name: etl
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: ingest-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: ingest
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ingest","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ingest","uid":"1f230d7c-a8eb-11e6-8dd1-525400b44ac5","resourceVersion":"2508","generation":3,"creationTimestamp":"2016-11-12T15:17:27Z","labels":{"app":"ingest","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ingest"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ingest:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ingest"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ingest","delete":"appdev","deploymentconfig":"ingest"}},"spec":{"containers":[{"name":"ingest","image":"172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"BROKER_AMQ_TCP_USERNAME","value":"redhat"},{"name":"BROKER_AMQ_TCP_PASSWORD","value":"redhat"}],"resources":{"limits":{"cpu":"500m","memory":"384Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":2,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ingest:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
     labels:
       app: ingest
-    name: ingest
+      delete: appdev
+      openshift.io/deployment-config.name: ingest
+    name: ingest-1
   spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ingest:latest
-        namespace: appdev
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
-    source:
-      contextDir: ingest
-      git:
-        ref: master
-        uri: https://github.com/benemon/unified-jboss-ocp
-      type: Git
-    strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: fis-java-openshift:1.0
-          namespace: openshift
-      type: Source
-    triggers:
-    - github:
-        secret: 29c2ba59c08f0050
-      type: GitHub
-    - generic:
-        secret: f9a77f81fdabc5e0
-      type: Generic
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
+    replicas: 1
+    selector:
+      deployment: ingest-1
+      deploymentconfig: ingest
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: ingest
+          openshift.io/deployment.name: ingest-1
+        creationTimestamp: null
+        labels:
+          app: ingest
+          delete: appdev
+          deployment: ingest-1
+          deploymentconfig: ingest
+      spec:
+        containers:
+        - env:
+          - name: BROKER_AMQ_TCP_USERNAME
+            value: redhat
+          - name: BROKER_AMQ_TCP_PASSWORD
+            value: redhat
+          image: 172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781
+          imagePullPolicy: Always
+          name: ingest
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 384Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
   status:
-    lastVersion: 0
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: ref-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ref","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ref","uid":"d86c0a60-a9c5-11e6-8dd1-525400b44ac5","resourceVersion":"3636","generation":3,"creationTimestamp":"2016-11-13T17:23:08Z","labels":{"app":"ref","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ref"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ref@sha256:ac0f063882284c24fd7d6e9487d712124deecdf653252fb21b7e9dee1df0492b"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ref"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ref","delete":"appdev","deploymentconfig":"ref"}},"spec":{"containers":[{"name":"ref","image":"172.30.248.101:5000/appdev/ref@sha256:ac0f063882284c24fd7d6e9487d712124deecdf653252fb21b7e9dee1df0492b","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"REFERENCE_DATA_DIRECTORY","value":"/deployments/ref"}],"resources":{"limits":{"cpu":"500m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":2,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+      openshift.io/deployment-config.name: ref
+    name: ref-1
+  spec:
+    replicas: 0
+    selector:
+      deployment: ref-1
+      deploymentconfig: ref
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: ref
+          openshift.io/deployment.name: ref-1
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deployment: ref-1
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:ac0f063882284c24fd7d6e9487d712124deecdf653252fb21b7e9dee1df0492b
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: ref-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ref","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ref","uid":"d86c0a60-a9c5-11e6-8dd1-525400b44ac5","resourceVersion":"4411","generation":6,"creationTimestamp":"2016-11-13T17:23:08Z","labels":{"app":"ref","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ref"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ref"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ref","delete":"appdev","deploymentconfig":"ref"}},"spec":{"containers":[{"name":"ref","image":"172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"REFERENCE_DATA_DIRECTORY","value":"/deployments/ref"}],"resources":{"limits":{"cpu":"500m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":2,"observedGeneration":6,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+      openshift.io/deployment-config.name: ref
+    name: ref-2
+  spec:
+    replicas: 0
+    selector:
+      deployment: ref-2
+      deploymentconfig: ref
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: ref
+          openshift.io/deployment.name: ref-2
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deployment: ref-2
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: ref-3-deploy
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by a config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ref","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ref","uid":"d86c0a60-a9c5-11e6-8dd1-525400b44ac5","resourceVersion":"4659","generation":7,"creationTimestamp":"2016-11-13T17:23:08Z","labels":{"app":"ref","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ref"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ref"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ref","delete":"appdev","deploymentconfig":"ref"}},"spec":{"containers":[{"name":"ref","image":"172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"REFERENCE_DATA_DIRECTORY","value":"/deployments/ref"}],"resources":{"limits":{"cpu":"1","memory":"256Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":3,"observedGeneration":7,"replicas":1,"updatedReplicas":1,"unavailableReplicas":1,"details":{"message":"caused by a config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+      openshift.io/deployment-config.name: ref
+    name: ref-3
+  spec:
+    replicas: 0
+    selector:
+      deployment: ref-3
+      deploymentconfig: ref
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "3"
+          openshift.io/deployment-config.name: ref
+          openshift.io/deployment.name: ref-3
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deployment: ref-3
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:81aa7eb5874c8b3ee7885d5838a4620ce2fde6c860f8ec9f8538c4b5fc70f4f3
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: ref-4-deploy
+      openshift.io/deployment-config.latest-version: "4"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ref","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ref","uid":"d86c0a60-a9c5-11e6-8dd1-525400b44ac5","resourceVersion":"4807","generation":8,"creationTimestamp":"2016-11-13T17:23:08Z","labels":{"app":"ref","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ref"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ref"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ref","delete":"appdev","deploymentconfig":"ref"}},"spec":{"containers":[{"name":"ref","image":"172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"REFERENCE_DATA_DIRECTORY","value":"/deployments/ref"}],"resources":{"limits":{"cpu":"1","memory":"256Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":4,"observedGeneration":8,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+      openshift.io/deployment-config.name: ref
+    name: ref-4
+  spec:
+    replicas: 0
+    selector:
+      deployment: ref-4
+      deploymentconfig: ref
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "4"
+          openshift.io/deployment-config.name: ref
+          openshift.io/deployment.name: ref-4
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deployment: ref-4
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: ref-5-deploy
+      openshift.io/deployment-config.latest-version: "5"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by a config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"ref","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/ref","uid":"d86c0a60-a9c5-11e6-8dd1-525400b44ac5","resourceVersion":"4870","generation":9,"creationTimestamp":"2016-11-13T17:23:08Z","labels":{"app":"ref","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["ref"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"ref:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"ref"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ref","delete":"appdev","deploymentconfig":"ref"}},"spec":{"containers":[{"name":"ref","image":"172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"REFERENCE_DATA_DIRECTORY","value":"/deployments/ref"}],"resources":{"limits":{"cpu":"1","memory":"384Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":5,"observedGeneration":9,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by a config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: ref
+      delete: appdev
+      openshift.io/deployment-config.name: ref
+    name: ref-5
+  spec:
+    replicas: 1
+    selector:
+      deployment: ref-5
+      deploymentconfig: ref
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "5"
+          openshift.io/deployment-config.name: ref
+          openshift.io/deployment.name: ref-5
+        creationTimestamp: null
+        labels:
+          app: ref
+          delete: appdev
+          deployment: ref-5
+          deploymentconfig: ref
+      spec:
+        containers:
+        - env:
+          - name: REFERENCE_DATA_DIRECTORY
+            value: /deployments/ref
+          image: 172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532
+          imagePullPolicy: Always
+          name: ref
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.name: stats-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: stats
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: caused by an image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"stats","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/stats","uid":"5693e113-a9d1-11e6-8dd1-525400b44ac5","resourceVersion":"5218","generation":2,"creationTimestamp":"2016-11-13T18:45:24Z","labels":{"app":"stats","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["stats"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"stats:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"stats"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"stats","delete":"appdev","deploymentconfig":"stats"}},"spec":{"containers":[{"name":"stats","image":"172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971","ports":[{"containerPort":8778,"protocol":"TCP"}],"resources":{"limits":{"cpu":"1","memory":"384Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":1,"observedGeneration":1,"details":{"message":"caused by an image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"stats:latest"}}}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: stats
+      delete: appdev
+      openshift.io/deployment-config.name: stats
+    name: stats-1
+  spec:
+    replicas: 0
+    selector:
+      deployment: stats-1
+      deploymentconfig: stats
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: stats
+          openshift.io/deployment.name: stats-1
+        creationTimestamp: null
+        labels:
+          app: stats
+          delete: appdev
+          deployment: stats-1
+          deploymentconfig: stats
+      spec:
+        containers:
+        - image: 172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971
+          imagePullPolicy: Always
+          name: stats
+          ports:
+          - containerPort: 8778
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.name: stats-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: stats
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: caused by a config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"stats","namespace":"appdev","selfLink":"/oapi/v1/namespaces/appdev/deploymentconfigs/stats","uid":"5693e113-a9d1-11e6-8dd1-525400b44ac5","resourceVersion":"5275","generation":3,"creationTimestamp":"2016-11-13T18:45:24Z","labels":{"app":"stats","delete":"appdev"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{}},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["stats"],"from":{"kind":"ImageStreamTag","namespace":"appdev","name":"stats:latest"},"lastTriggeredImage":"172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971"}},{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"stats"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"stats","delete":"appdev","deploymentconfig":"stats"}},"spec":{"containers":[{"name":"stats","image":"172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971","ports":[{"containerPort":8778,"protocol":"TCP"}],"env":[{"name":"DARWIN_CACHE_NAME","value":"darwindata"},{"name":"REF_DATA_CACHE_NAME","value":"ref"}],"resources":{"limits":{"cpu":"1","memory":"384Mi"},"requests":{"cpu":"250m","memory":"128Mi"}},"terminationMessagePath":"/dev/termination-log","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{}}}},"status":{"latestVersion":2,"observedGeneration":3,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"details":{"message":"caused by a config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: stats
+      delete: appdev
+      openshift.io/deployment-config.name: stats
+    name: stats-2
+  spec:
+    replicas: 1
+    selector:
+      deployment: stats-2
+      deploymentconfig: stats
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: stats
+          openshift.io/deployment.name: stats-2
+        creationTimestamp: null
+        labels:
+          app: stats
+          delete: appdev
+          deployment: stats-2
+          deploymentconfig: stats
+      spec:
+        containers:
+        - env:
+          - name: DARWIN_CACHE_NAME
+            value: darwindata
+          - name: REF_DATA_CACHE_NAME
+            value: ref
+          image: 172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971
+          imagePullPolicy: Always
+          name: stats
+          ports:
+          - containerPort: 8778
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
 - apiVersion: v1
   kind: Route
   metadata:
@@ -638,8 +1729,685 @@ objects:
   status:
     ingress:
     - conditions:
-      - lastTransitionTime: 2016-11-03T08:28:17Z
+      - lastTransitionTime: 2016-11-11T16:30:04Z
         status: "True"
         type: Admitted
       host: datagrid-app-appdev.rhel-cdk.10.1.2.2.xip.io
       routerName: router
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The broker's OpenWire port.
+    creationTimestamp: null
+    labels:
+      app: amq62-basic
+      application: broker
+      delete: amq
+      template: amq62-basic
+      xpaas: 1.3.1
+    name: broker-amq-tcp
+  spec:
+    ports:
+    - port: 61616
+      protocol: TCP
+      targetPort: 61616
+    selector:
+      deploymentConfig: broker-amq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The web server's HTTP port.
+      service.alpha.openshift.io/dependencies: '[{"name":"datagrid-app-hotrod","namespace":"","kind":"Service"}]'
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentConfig: datagrid-app
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Hot Rod service for clustered applications.
+    creationTimestamp: null
+    labels:
+      app: datagrid65-basic
+      application: datagrid-app
+      delete: jdg
+      template: datagrid65-basic
+      xpaas: 1.2.0
+    name: datagrid-app-hotrod
+  spec:
+    ports:
+    - port: 11333
+      protocol: TCP
+      targetPort: 11333
+    selector:
+      deploymentConfig: datagrid-app
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+      service.alpha.openshift.io/dependencies: '[{"name":"ingest","namespace":"","kind":"Service"},{"name":"ref","namespace":"","kind":"Service"},{"name":"stats","namespace":"","kind":"Service"}]'
+    creationTimestamp: null
+    labels:
+      app: etl
+      delete: appdev
+    name: etl
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: etl
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: ingest
+      delete: appdev
+    name: ingest
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: ingest
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: ref
+      delete: appdev
+    name: ref
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: ref
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: stats
+      delete: appdev
+    name: stats
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deploymentconfig: stats
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"broker-amq-1","uid":"e69316d2-a82b-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"1876"}}
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: broker-amq
+      openshift.io/deployment.name: broker-amq-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: broker-amq-1-
+    labels:
+      application: broker
+      deployment: broker-amq-1
+      deploymentConfig: broker-amq
+      deploymentconfig: broker-amq
+  spec:
+    containers:
+    - env:
+      - name: AMQ_USER
+        value: redhat
+      - name: AMQ_PASSWORD
+        value: redhat
+      - name: AMQ_TRANSPORTS
+        value: openwire
+      - name: AMQ_QUEUES
+      - name: AMQ_TOPICS
+      - name: MQ_SERIALIZABLE_PACKAGES
+      - name: AMQ_MESH_DISCOVERY_TYPE
+        value: kube
+      - name: AMQ_MESH_SERVICE_NAME
+        value: broker-amq-tcp
+      - name: AMQ_MESH_SERVICE_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: AMQ_STORAGE_USAGE_LIMIT
+        value: 1 gb
+      image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
+      imagePullPolicy: Always
+      name: broker-amq
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      - containerPort: 5672
+        name: amqp
+        protocol: TCP
+      - containerPort: 1883
+        name: mqtt
+        protocol: TCP
+      - containerPort: 61613
+        name: stomp
+        protocol: TCP
+      - containerPort: 61616
+        name: tcp
+        protocol: TCP
+      readinessProbe:
+        exec:
+          command:
+          - /bin/bash
+          - -c
+          - /opt/amq/bin/readinessProbe.sh
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 60
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"datagrid-app-1","uid":"1a17b152-a82c-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"1946"}}
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: datagrid-app
+      openshift.io/deployment.name: datagrid-app-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: datagrid-app-1-
+    labels:
+      application: datagrid-app
+      deployment: datagrid-app-1
+      deploymentConfig: datagrid-app
+      deploymentconfig: datagrid-app
+  spec:
+    containers:
+    - env:
+      - name: USERNAME
+        value: redhat
+      - name: PASSWORD
+        value: S3cur1ty!
+      - name: OPENSHIFT_KUBE_PING_LABELS
+        value: application=datagrid-app
+      - name: OPENSHIFT_KUBE_PING_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: INFINISPAN_CONNECTORS
+        value: hotrod,rest
+      - name: CACHE_NAMES
+        value: ref,darwindata
+      - name: ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH
+      - name: HOTROD_SERVICE_NAME
+        value: datagrid-app-hotrod
+      - name: MEMCACHED_CACHE
+      - name: REST_SECURITY_DOMAIN
+      - name: JGROUPS_CLUSTER_PASSWORD
+        value: iarw6keV
+      image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe
+      imagePullPolicy: Always
+      livenessProbe:
+        exec:
+          command:
+          - /bin/bash
+          - -c
+          - /opt/datagrid/bin/livenessProbe.sh
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: datagrid-app
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      - containerPort: 8888
+        name: ping
+        protocol: TCP
+      - containerPort: 11211
+        name: memcached
+        protocol: TCP
+      - containerPort: 11222
+        name: hotrod
+        protocol: TCP
+      readinessProbe:
+        exec:
+          command:
+          - /bin/bash
+          - -c
+          - /opt/datagrid/bin/readinessProbe.sh
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 60
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"etl-3","uid":"5a004b3e-a9d3-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"5586"}}
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: etl
+      openshift.io/deployment.name: etl-3
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: etl-3-
+    labels:
+      app: etl
+      delete: appdev
+      deployment: etl-3
+      deploymentconfig: etl
+  spec:
+    containers:
+    - env:
+      - name: DARWIN_CACHE_NAME
+        value: darwindata
+      - name: REF_DATA_CACHE_NAME
+        value: ref
+      - name: BROKER_AMQ_TCP_USERNAME
+        value: redhat
+      - name: BROKER_AMQ_TCP_PASSWORD
+        value: redhat
+      image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
+      imagePullPolicy: Always
+      name: etl
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"ingest-1","uid":"59c3c1d4-a8ec-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"5721"}}
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: ingest
+      openshift.io/deployment.name: ingest-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: ingest-1-
+    labels:
+      app: ingest
+      delete: appdev
+      deployment: ingest-1
+      deploymentconfig: ingest
+  spec:
+    containers:
+    - env:
+      - name: BROKER_AMQ_TCP_USERNAME
+        value: redhat
+      - name: BROKER_AMQ_TCP_PASSWORD
+        value: redhat
+      image: 172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781
+      imagePullPolicy: Always
+      name: ingest
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"ref-5","uid":"1207899e-a9cf-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"4889"}}
+      openshift.io/deployment-config.latest-version: "5"
+      openshift.io/deployment-config.name: ref
+      openshift.io/deployment.name: ref-5
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: ref-5-
+    labels:
+      app: ref
+      delete: appdev
+      deployment: ref-5
+      deploymentconfig: ref
+  spec:
+    containers:
+    - env:
+      - name: REFERENCE_DATA_DIRECTORY
+        value: /deployments/ref
+      image: 172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532
+      imagePullPolicy: Always
+      name: ref
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      resources:
+        limits:
+          cpu: "1"
+          memory: 384Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"appdev","name":"stats-2","uid":"088a5bb2-a9d2-11e6-8dd1-525400b44ac5","apiVersion":"v1","resourceVersion":"5293"}}
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: stats
+      openshift.io/deployment.name: stats-2
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: stats-2-
+    labels:
+      app: stats
+      delete: appdev
+      deployment: stats-2
+      deploymentconfig: stats
+  spec:
+    containers:
+    - env:
+      - name: DARWIN_CACHE_NAME
+        value: darwindata
+      - name: REF_DATA_CACHE_NAME
+        value: ref
+      image: 172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971
+      imagePullPolicy: Always
+      name: stats
+      ports:
+      - containerPort: 8778
+        protocol: TCP
+      resources:
+        limits:
+          cpu: "1"
+          memory: 384Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+          - SYS_CHROOT
+        privileged: false
+        runAsUser: 1000060000
+        seLinuxOptions:
+          level: s0:c8,c2
+      terminationMessagePath: /dev/termination-log
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-u7640
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    host: rhel-cdk
+    imagePullSecrets:
+    - name: default-dockercfg-bj8xu
+    nodeName: rhel-cdk
+    restartPolicy: Always
+    securityContext:
+      fsGroup: 1000060000
+      seLinuxOptions:
+        level: s0:c8,c2
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-u7640
+      secret:
+        secretName: default-token-u7640
+  status:
+    phase: Pending
