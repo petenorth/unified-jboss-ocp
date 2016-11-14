@@ -15,8 +15,8 @@ Laughable HLD: https://www.lucidchart.com/invitations/accept/5284a69b-6231-43bf-
     * [OpenShift](#openshift)
 * [Usage](#usage)
     * [Template](#template)
-    * [Points of Interest](#points)
-    * [Known Issues](#known issues)
+    * [Points of Interest](#points-of-interest)
+    * [Known Issues](#known-issues)
 
 # Services
 
