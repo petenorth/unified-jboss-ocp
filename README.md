@@ -51,7 +51,7 @@ Retrieves the Objects from the Ingest component, transforms them into a common d
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss Data Grid
 
-## Description
+### Description
 
 Parse an XML file of reference data values from source repository and puts it into JDG. Objects are transformed into a protobus-enabled common data format.
 
@@ -61,7 +61,7 @@ Parse an XML file of reference data values from source repository and puts it in
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss Data Grid
 
-## Description
+### Description
 Poll the JDG service and search for data with a location matching the content of environment variable 'ISSUE_LOCATION'.
 
 ## Web
@@ -78,10 +78,21 @@ Poll the JDG service and search for data with a location matching the content of
 
 ## OpenShift
 
-Templates for creating the entire project in a single namespace. Used by running:
+### Components
+
+* Kubernetes
+* Some YAML
+
+Template for creating the entire project in a single namespace. Used by running:
 `oc create -f https://raw.githubusercontent.com/benemon/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml`
 
-For further information see the section on Useage.
+This will create:
+* BuildConfigs
+* DeploymentConfigs
+* ImageStreams
+* Services
+
+For further information see [Usage](#usage).
 
 # Usage
 
