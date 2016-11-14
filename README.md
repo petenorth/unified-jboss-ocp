@@ -31,7 +31,7 @@ Ingest data from Network Rail's Darwin Push Port, documented here:
 
 http://nrodwiki.rockshore.net/index.php/Darwin:Push_Port
 
-This provides regular flow of xml formatted data. The data is decompressed and added to JBoss A-MQ as an XML message body.
+This consumes data from a STOMP producer, and provides regular flow of XML-formatted data. The data is decompressed and added to JBoss A-MQ as an XML message body.
 
 ## ETL
 
@@ -42,7 +42,7 @@ This provides regular flow of xml formatted data. The data is decompressed and a
 
 ### Description
 
-Retrieves the Objects from the Ingest component, transforms them into a common data format, and puts it into JDG. Used the Reference Data route for augmenting the Darwin Data
+Retrieves the messages containing XML body from A-MQ, transforms them into a protobuf-enabled common data format, and puts them into JDG. Used the Reference Data route to augment the Darwin Push Port Data
 
 
 ## RefDataLoader
@@ -53,7 +53,7 @@ Retrieves the Objects from the Ingest component, transforms them into a common d
 
 ### Description
 
-Parse an XML file of reference data values from source repository and puts it into JDG. Objects are transformed into a protobus-enabled common data format.
+Parses an XML file of reference data values from the [reference-data.xml](refdataloader/src/main/resources/ref/reference-data.xml file, and puts the data into JDG. Objects are transformed into a protobuf-enabled common data format.
 
 ## JDGStats
 
@@ -62,7 +62,8 @@ Parse an XML file of reference data values from source repository and puts it in
 * Red Hat JBoss Data Grid
 
 ### Description
-Poll the JDG service and search for data with a location matching the content of environment variable 'ISSUE_LOCATION'.
+
+Periodically search the JDG instance using Infinispan Query DSL to search for location data embedded in the message. By deafult, this is 'Birmingham New Street', but can be any TIPLOC or location identifier identified in the ref data in [reference-data.xml](refdataloader/src/main/resources/ref/reference-data.xml). To change this, add an environment variable of *ISSUE_LOCATION* to the deployment config using one of the values in the aforementioned reference data file.
 
 ## Web
 
@@ -82,6 +83,8 @@ Poll the JDG service and search for data with a location matching the content of
 
 * Kubernetes
 * Some YAML
+
+### Description
 
 Template for creating the entire project in a single namespace. Used by running:
 `oc create -f https://raw.githubusercontent.com/benemon/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml`
@@ -134,13 +137,10 @@ This will kick off deployments of:
     - ref cache
 
 It will kick off builds of:
-* Ingest - Consume data from National Rail STOMP producer
-
-* Ref - Load the JDG instance with reference data
-
-* ETL - Transform incoming messages from 'ingest' route into a protobuf-enabled common data format, and put into JDG. Augment incoming data with reference data.
-
-* Stats - Periodically search the JDG instance using Infinispan Query DSL to search for location data embedded in the message. By deafult, this is 'Birmingham New Street', but can be any TIPLOC or location identifier identified in the ref data in *refdataloader/src/main/resources/ref/reference-data.xml*. To change this, add an environment variable of *ISSUE_LOCATION* to the deployment config using one of the values in the aforementioned reference data file.
+* Ingest
+* Ref
+* ETL
+* Stats
 
 By default, all of the service deployments are created with 0 replicas. This is done to make sure that the supporting components (A-MQ and JDG) are up and running before we start deployment.
 
