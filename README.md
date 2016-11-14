@@ -1,6 +1,5 @@
 # unified-jboss-ocp
-An demo project using multiple JBoss Middleware components inside OpenShift Container Platform. Kickstarted under the auspices of being a 'useful learning exercise'. Or something. Whatever.
-
+A demo project using multiple JBoss Middleware components inside OpenShift Container Platform. Kickstarted under the auspices of being a 'useful learning exercise'. Or something. Whatever.
 
 Laughable HLD: https://www.lucidchart.com/invitations/accept/5284a69b-6231-43bf-ab02-bb3fba651e89
 
