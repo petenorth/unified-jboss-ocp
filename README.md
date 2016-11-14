@@ -151,7 +151,7 @@ Have a look at the logs for the 'stats' service to check the output. Given that 
 
 ## Points of Interest:
 
-This is a multi-module project. Due to the way that multi-module projects are handled by OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable 'MODULE_DIR' and see if it contains S2I scripts for 'assemble' and 'run'. If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
+This is a Maven multi-module project. Due to the way that multi-module projects are handled by (some of) OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable 'MODULE_DIR' and see if it contains S2I scripts for 'assemble' and 'run'. If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
 
 ## Known Issues:
 * Build fails with message "error: build error: Failed to push image: unauthorized: authentication required"
