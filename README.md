@@ -84,10 +84,21 @@ For further information see the section on Useage.
 
 # Usage
 
+This process assumes you have a Nexus repository sitting in a project named 'cicd'. If you do not happen to have one either:
+
+* Create a 'cicd' project, and follow the instructions at [my Docker Nexus repository](https://github.com/benemon/docker-nexus#red-hat-nexus-repositories) to get yourself a Red Hat-flavoured Nexus image, with preconfigured repositories.
+
+* Alternatively, fork this project, comment out the configured nexus repositories, and uncomment the standard Red Hat repositories in the [settings.xml](configuration/settings.xml) file supplied.
+
 ## Template
 To use this project, run through the following steps.
 
+Create a new project for this template. Can be called anything, so I'm sticking with 'JBoss'. Because reasons.
+
 `$ oc new-project jboss`
+
+Make sure you're working in your new project:
+
 `$ oc project jboss`
 
 Assign the right roles to the default user. This enables clustering of AMQ and JDG within the project:
