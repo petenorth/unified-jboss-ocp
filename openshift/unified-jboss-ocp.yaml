@@ -213,7 +213,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: 172.30.248.101:5000/appdev/etl:latest
+        name: etl:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -235,7 +235,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: 172.30.248.101:5000/appdev/ingest:latest
+        name: ingest:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -257,7 +257,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: 172.30.248.101:5000/appdev/ref:latest
+        name: ref:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -279,7 +279,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: 172.30.248.101:5000/appdev/stats:latest
+        name: stats:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -293,7 +293,7 @@ objects:
     labels:
       app: amq62-basic
       application: broker
-      delete: amq
+      delete: appdev
       template: amq62-basic
       xpaas: 1.3.1
     name: broker-amq
@@ -340,7 +340,7 @@ objects:
                 fieldPath: metadata.namespace
           - name: AMQ_STORAGE_USAGE_LIMIT
             value: 1 gb
-          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:acadeae82790e144cc8631db9a78344cad2b359bc46d463a556c77caf08b11be
+          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift:latest
           imagePullPolicy: Always
           name: broker-amq
           ports:
@@ -400,7 +400,7 @@ objects:
     labels:
       app: datagrid65-basic
       application: datagrid-app
-      delete: jdg
+      delete: appdev
       template: datagrid65-basic
       xpaas: 1.2.0
     name: datagrid-app
@@ -435,7 +435,7 @@ objects:
                 apiVersion: v1
                 fieldPath: metadata.namespace
           - name: INFINISPAN_CONNECTORS
-            value: hotrod,rest
+            value: hotrod
           - name: CACHE_NAMES
             value: ref,darwindata
           - name: ENCRYPTION_REQUIRE_SSL_CLIENT_AUTH
@@ -445,8 +445,7 @@ objects:
           - name: REST_SECURITY_DOMAIN
           - name: JGROUPS_CLUSTER_PASSWORD
             value: iarw6keV
-          image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift@sha256:c3800b3cbdc7b6c61d9e0c1810f035e601d58f93292587afb5152ebd6d05ffbe
-          imagePullPolicy: Always
+          image: registry.access.redhat.com/jboss-datagrid-6/datagrid65-openshift:latest
           livenessProbe:
             exec:
               command:
@@ -498,7 +497,7 @@ objects:
         - datagrid-app
         from:
           kind: ImageStreamTag
-          name: jboss-datagrid65-openshift:1.2
+          name: jboss-datagrid65-openshift:latest
           namespace: openshift
       type: ImageChange
     - type: ConfigChange
@@ -549,7 +548,7 @@ objects:
             value: redhat
           - name: BROKER_AMQ_TCP_PASSWORD
             value: redhat
-          image: 172.30.248.101:5000/appdev/etl@sha256:7f70f72fea005f4ff96dab26ddf1e716f7054e0cf4da8e96585ba07b4dd9e6d7
+          image: etl:latest
           imagePullPolicy: Always
           name: etl
           ports:
@@ -617,7 +616,7 @@ objects:
             value: redhat
           - name: BROKER_AMQ_TCP_PASSWORD
             value: redhat
-          image: 172.30.248.101:5000/appdev/ingest@sha256:f33259dd43b4aa504b372c6f4cc39e33acf0282a6b0d8577f3e42c265e71b781
+          image: ingest:latest
           imagePullPolicy: Always
           name: ingest
           ports:
@@ -689,7 +688,7 @@ objects:
         - env:
           - name: REFERENCE_DATA_DIRECTORY
             value: /deployments/ref
-          image: 172.30.248.101:5000/appdev/ref@sha256:44e5ddc20829dcd3ef899fc2dd193207e38d4c95d34787d609024d13bbf22532
+          image: ref:latest
           imagePullPolicy: Always
           name: ref
           ports:
@@ -763,7 +762,7 @@ objects:
             value: darwindata
           - name: REF_DATA_CACHE_NAME
             value: ref
-          image: 172.30.248.101:5000/appdev/stats@sha256:eb850996d88813722542acfacc7e3869f08ea5ae4ff9606a32427d41434d7971
+          image: stats
           imagePullPolicy: Always
           name: stats
           ports:
