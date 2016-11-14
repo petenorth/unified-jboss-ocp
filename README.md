@@ -13,6 +13,7 @@ Laughable HLD: https://www.lucidchart.com/invitations/accept/5284a69b-6231-43bf-
     * [SSO](#sso)
     * [OpenShift](#openshift)
 * [Usage](#usage)
+    * [Maven](#maven)
     * [Template](#template)
     * [Points of Interest](#points-of-interest)
     * [Known Issues](#known-issues)
@@ -84,7 +85,9 @@ For further information see the section on Useage.
 
 # Usage
 
-This process assumes you have a Nexus repository sitting in a project named 'cicd'. If you do not happen to have one either:
+## Maven
+
+This project is heavily dependent on Maven, and assumes you have a Nexus repository sitting in a project named 'cicd'. If you do not happen to have that configured, either:
 
 * Create a 'cicd' project, and follow the instructions at [my Docker Nexus repository](https://github.com/benemon/docker-nexus#red-hat-nexus-repositories) to get yourself a Red Hat-flavoured Nexus image, with preconfigured repositories.
 
@@ -104,11 +107,9 @@ Make sure you're working in your new project:
 Assign the right roles to the default user. This enables clustering of AMQ and JDG within the project:
 `$ oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)`
 
-
 Create the template:
 
 `$ oc create -f https://raw.githubusercontent.com/benemon/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml`
-
 
 This will kick off deployments of:
 * A-MQ
@@ -147,7 +148,6 @@ Have a look at the logs for the 'stats' service to check the output. Given that 
 ## Points of Interest:
 
 This is a multi-module project. Due to the way that multi-module projects are handled by OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable 'MODULE_DIR' and see if it contains S2I scripts for 'assemble' and 'run'. If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
-
 
 ## Known Issues:
 * Build fails with message "error: build error: Failed to push image: unauthorized: authentication required"
