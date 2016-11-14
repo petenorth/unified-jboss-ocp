@@ -4,35 +4,50 @@ An demo project using multiple JBoss Middleware components inside OpenShift Cont
 
 Laughable HLD: https://www.lucidchart.com/invitations/accept/5284a69b-6231-43bf-ab02-bb3fba651e89
 
+# Contents
+* [Services](#services)
+    * [Ingest](#ingest)
+    * [ETL](#etl)
+    * [RefDataLoader](#refdataloader)
+    * [JDGStats](#jdgstats)
+    * [Web](#web)   
+    * [SSO](#sso)
+    * [OpenShift](#openshift)
+* [Usage](#usage)
+    * [Template](#template)
+    * [Points of Interest](#points)
+    * [Known Issues](#known)
 
-# ingest
+# Services
 
-## Components
+## Ingest
+
+### Components
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss A-MQ
 
-## Description
+### Description
 Ingest data from Network Rail's Darwin Push Port, documented here:
 
 http://nrodwiki.rockshore.net/index.php/Darwin:Push_Port
 
 This provides regular flow of xml formatted data. The data is decompressed and added to JBoss A-MQ as an XML message body.
 
-# etl
+## ETL
 
-## Components
+### Components
 * Red Hat JBoss A-MQ
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss Data Grid
 
-## Description
+### Description
 
 Retrieves the Objects from the Ingest component, transforms them into a common data format, and puts it into JDG. Used the Reference Data route for augmenting the Darwin Data
 
 
-# refdataloader
+## RefDataLoader
 
-## Components
+### Components
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss Data Grid
 
@@ -40,34 +55,37 @@ Retrieves the Objects from the Ingest component, transforms them into a common d
 
 Parse an XML file of reference data values from source repository and puts it into JDG. Objects are transformed into a protobus-enabled common data format.
 
-# jdgstats
+## JDGStats
 
-## Components
+### Components
 * Red Hat JBoss Fuse Integration Services
 * Red Hat JBoss Data Grid
 
-# Description
+## Description
 Poll the JDG service and search for data with a location matching the content of environment variable 'ISSUE_LOCATION'.
 
-# web
+## Web
 
 [TBD] Shiny-yet-ultimately-pointless web front end over JDG data
 
-# sso
+## SSO
 
 [TBD] Can this play a part somehow?
 
-# rules
+## Rules
 
 [TBD] Maybe we can do some CEP-type stuff over the incoming data flows
 
-# openshift
+## OpenShift
 
 Templates for creating the entire project in a single namespace. Used by running:
-
 `oc create -f https://raw.githubusercontent.com/benemon/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml`
 
+For further information see the section on Useage.
+
 # Usage
+
+## Template
 To use this project, run through the following steps.
 
 `$ oc new-project jboss`
@@ -116,7 +134,7 @@ At this point, you can just run the following command to scale up the rest of th
 
 Have a look at the logs for the 'stats' service to check the output. Given that there is usually something wrong at Birmingham New Street, you should see some alerts flagged for trains with stopping points there!
 
-## Points of interest:
+## Points of Interest:
 
 This is a multi-module project. Due to the way that multi-module projects are handled by OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable 'MODULE_DIR' and see if it contains S2I scripts for 'assemble' and 'run'. If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
 
