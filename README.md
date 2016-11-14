@@ -145,4 +145,4 @@ This seems to occur on the CDK when the registry is under load. Simply repeat th
 
 * Errors from Camel routes after restarting JDG instance
 
-These tend to occue because the protobufs schema is no longer cached in the JDG instance. To resolve, restart the 'ref' deployment. This will force re-registration of protobufs schema and reload the reference data.
+These tend to occur because the protobufs schema is no longer cached in the JDG instance. To resolve, restart the 'ref' deployment. This will force re-registration of protobufs schema and reload the reference data.
