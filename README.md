@@ -129,7 +129,7 @@ It will kick off builds of:
 
 * ETL - Transform incoming messages from 'ingest' route into a protobuf-enabled common data format, and put into JDG. Augment incoming data with reference data.
 
-* Stats - Periodically search the JDG instance using Infinispan Query DSL to search for location data embedded in the message. By deafult, this is 'Birmingham New Street', but can be any TIPLOC or location identifier identified in the ref data in *refdataloader/src/main/resources/ref/reference-data.xml*. To change this, add an environment variable of ISSUE_LOCATION to the deployment config using one of the values in the aforementioned reference data file.
+* Stats - Periodically search the JDG instance using Infinispan Query DSL to search for location data embedded in the message. By deafult, this is 'Birmingham New Street', but can be any TIPLOC or location identifier identified in the ref data in *refdataloader/src/main/resources/ref/reference-data.xml*. To change this, add an environment variable of *ISSUE_LOCATION* to the deployment config using one of the values in the aforementioned reference data file.
 
 By default, all of the service deployments are created with 0 replicas. This is done to make sure that the supporting components (A-MQ and JDG) are up and running before we start deployment.
 
@@ -151,7 +151,7 @@ Have a look at the logs for the 'stats' service to check the output. Given that 
 
 ## Points of Interest:
 
-This is a Maven multi-module project. Due to the way that multi-module projects are handled by (some of) OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable 'MODULE_DIR' and see if it contains S2I scripts for 'assemble' and 'run'. If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
+This is a Maven multi-module project. Due to the way that multi-module projects are handled by (some of) OpenShift's builder images, S2I scripts in the individual modules are not respected. To get around this, I have added S2I scripts at the root level of the project which will inspect the module supplied in the build-time environment variable *MODULE_DIR* and see if it contains S2I scripts for [assemble](.s2i/bin/assemble) and [run](.s2i/bin/run). If they exist, they will be used. If they don't, or the environment variable doesn't exist, the defaults will be used.
 
 ## Known Issues:
 * Build fails with message "error: build error: Failed to push image: unauthorized: authentication required"
