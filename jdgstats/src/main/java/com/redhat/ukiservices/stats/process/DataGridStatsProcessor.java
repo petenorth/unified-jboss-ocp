@@ -23,7 +23,7 @@ import com.redhat.ukiservices.model.common.impl.DarwinDataModel;
 @Named("dgStatsProcessor")
 public class DataGridStatsProcessor implements Processor {
 
-	private static final String OUTPUT_LOG_MESSAGE = "Status Update: There are %d issues currently related to %s %n %s";
+	private static final String OUTPUT_LOG_MESSAGE = "Status Update: There are %d issues currently related to %s %n%s";
 
 	@Inject
 	@ConfigProperty(name = "ISSUE_LOCATION", defaultValue = "Birmingham New Street")
@@ -45,6 +45,8 @@ public class DataGridStatsProcessor implements Processor {
 		{
 			sb.append(++count);
 			sb.append(": ");
+			sb.append(m.getId());
+			sb.append(" - ");
 			if (m.getMessage() != null)
 			{
 
