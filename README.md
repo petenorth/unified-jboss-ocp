@@ -111,6 +111,10 @@ Create the template:
 
 `$ oc create -f https://raw.githubusercontent.com/benemon/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml`
 
+Instantiate the template:
+
+`$ oc new-app --template=unified-jboss-ocp`
+
 This will kick off deployments of:
 * A-MQ
     - ingestdata queue
