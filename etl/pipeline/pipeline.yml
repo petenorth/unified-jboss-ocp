@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: etlpipeline
+  labels:
+    name: etlpipeline
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "etl", "namespace": "", "kind": "DeploymentConfig"}]'
+spec:
+  triggers:
+    -
+      type: GitHub
+      github:
+        secret: secret101
+    -
+      type: Generic
+      generic:
+        secret: secret101
+  runPolicy: Serial
+  source:
+    type: None
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfile: "node('maven') {\nstage 'buildInDevelopment'\nopenshiftBuild(namespace: 'jboss', buildConfig: 'etl', showBuildLogs: 'true')\nstage 'deployInDevelopment'\nopenshiftDeploy(namespace: 'jboss', deploymentConfig: 'etl')\nopenshiftScale(namespace: 'jboss', deploymentConfig: 'etl',replicaCount: '1')\n}"
+  output:
+  resources:
+  postCommit:
+status:
+  lastVersion: 1
+

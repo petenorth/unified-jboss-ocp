@@ -39,16 +39,6 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
-    triggers:
-    - generic:
-        secret: 114b7f6b8d9d1c71
-      type: Generic
-    - github:
-        secret: 62f8cc9f3ab12176
-      type: GitHub
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -86,16 +76,6 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
-    triggers:
-    - generic:
-        secret: 6bd2dbb23448c815
-      type: Generic
-    - github:
-        secret: beb9285898c4db94
-      type: GitHub
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -135,16 +115,6 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
-    triggers:
-    - generic:
-        secret: 0ffae22dfa878f50
-      type: Generic
-    - github:
-        secret: 71415b5e247bdbe0
-      type: GitHub
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -182,16 +152,6 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
-    triggers:
-    - generic:
-        secret: 3097bb545b065845
-      type: Generic
-    - github:
-        secret: a83825df71d306ff
-      type: GitHub
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -481,14 +441,6 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - etl
-        from:
-          kind: ImageStreamTag
-          name: etl:latest
-      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -554,14 +506,6 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - ingest
-        from:
-          kind: ImageStreamTag
-          name: ingest:latest      
-      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -627,14 +571,6 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - ref
-        from:
-          kind: ImageStreamTag
-          name: ref:latest     
-      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -700,15 +636,6 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - stats
-        from:
-          kind: ImageStreamTag
-          name: stats:latest
-          
-      type: ImageChange
     - type: ConfigChange
   status:
     observedGeneration: 4
