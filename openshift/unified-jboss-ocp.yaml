@@ -39,6 +39,13 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
+    triggers:
+    - generic:
+        secret: 114b7f6b8d9d1c71
+      type: Generic
+    - github:
+        secret: 62f8cc9f3ab12176
+      type: GitHub
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -76,6 +83,13 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
+    triggers:
+    - generic:
+        secret: 6bd2dbb23448c815
+      type: Generic
+    - github:
+        secret: beb9285898c4db94
+      type: GitHub
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -115,6 +129,13 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
+    triggers:
+    - generic:
+        secret: 0ffae22dfa878f50
+      type: Generic
+    - github:
+        secret: 71415b5e247bdbe0
+      type: GitHub
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -152,6 +173,13 @@ objects:
           name: fis-java-openshift:latest
           namespace: openshift
       type: Source
+    triggers:
+    - generic:
+        secret: 3097bb545b065845
+      type: Generic
+    - github:
+        secret: a83825df71d306ff
+      type: GitHub
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -888,3 +916,4 @@ objects:
     type: ClusterIP
   status:
     loadBalancer: {}
+
