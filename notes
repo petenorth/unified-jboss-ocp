@@ -1,9 +1,18 @@
-  158   oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/etl/pipeline/pipeline.yml -n cicd
-  159  oc new-project jboss
-  160  oc project jboss
-  161  oc policy add-role-to-user admin admin -n jboss
-  162  oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)
-  163  oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml
-  164  oc new-app --template=unified-jboss-ocp
-  165  history
-  166  oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n jboss
+oc new-project jboss
+oc project jboss
+oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/openshift/unified-jboss-ocp.yaml -n jboss
+oc new-app --template=unified-jboss-ocp
+oc policy add-role-to-user admin admin -n jboss
+oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n jboss
+oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/etl/pipeline/pipeline.yml -n cicd
+oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/ingest/pipeline/pipeline.yml -n cicd
+oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/refdataloader/pipeline/pipeline.yml -n cicd
+oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/jdgstats/pipeline/pipeline.yml -n cicd
+
+oc start-build etl
+oc start-build ingest
+oc start-build ref
+oc start-build stat
+
+
+
