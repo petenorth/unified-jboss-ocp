@@ -22,7 +22,7 @@ spec:
   strategy:
     type: JenkinsPipeline
     jenkinsPipelineStrategy:
-      jenkinsfile: "node('maven') {\nstage 'buildInDevelopment'\nopenshiftBuild(namespace: 'jboss', buildConfig: 'stats', showBuildLogs: 'true')\nstage 'deployInDevelopment'\nopenshiftDeploy(namespace: 'stats', deploymentConfig: 'etl')\nopenshiftScale(namespace: 'jboss', deploymentConfig: 'stats',replicaCount: '1')\n}"
+      jenkinsfile: "node('maven') {\nstage 'buildInDevelopment'\nopenshiftBuild(namespace: 'jboss', buildConfig: 'stats', showBuildLogs: 'true')\nstage 'deployInDevelopment'\nopenshiftDeploy(namespace: 'jboss', deploymentConfig: 'stats')\nopenshiftScale(namespace: 'jboss', deploymentConfig: 'stats',replicaCount: '1')\n}"
   output:
   resources:
   postCommit:
