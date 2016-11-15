@@ -469,6 +469,14 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
+    - imageChangeParams:
+        automatic: false
+        containerNames:
+        - etl
+        from:
+          kind: ImageStreamTag
+          name: etl:latest
+      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -534,6 +542,14 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
+    - imageChangeParams:
+        automatic: false
+        containerNames:
+        - ingest
+        from:
+          kind: ImageStreamTag
+          name: ingest:latest
+      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -599,6 +615,14 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ref
+        from:
+          kind: ImageStreamTag
+          name: ref:latest
+      type: ImageChange
     - type: ConfigChange
   status:
     availableReplicas: 1
@@ -664,6 +688,14 @@ objects:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
+    - imageChangeParams:
+        automatic: false
+        containerNames:
+        - stats
+        from:
+          kind: ImageStreamTag
+          name: stats:latest
+      type: ImageChange
     - type: ConfigChange
   status:
     observedGeneration: 4
