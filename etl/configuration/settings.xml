@@ -13,20 +13,10 @@
       </activation>
       <repositories>
         <repository>
-          <id>nexus-releases-repository</id>
-          <url>${releases.repo}</url>
+          <id>nexus-repository</id>
+          <url>http://nexus.cicd.svc.cluster.local:8081/content/groups/public/</url>
           <releases>
             <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-        <repository>
-          <id>nexus-snapshots-repository</id>
-          <url>${snapshots.repo}</url>
-          <releases>
-            <enabled>false</enabled>
           </releases>
           <snapshots>
             <enabled>true</enabled>
@@ -35,20 +25,10 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>nexus-plugin-releases-repository</id>
-          <url>${releases.repo}</url>
+          <id>nexus-plugin-repository</id>
+          <url>http://nexus.cicd.svc.cluster.local:8081/content/groups/public/</url>
           <releases>
             <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-          <id>nexus-plugin-snapshots-repository</id>
-          <url>${snapshots.repo}</url>
-          <releases>
-            <enabled>false</enabled>
           </releases>
           <snapshots>
             <enabled>true</enabled>
