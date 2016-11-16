@@ -10,6 +10,12 @@ parameters:
   - name: GIT_REF
     value: master
     description: "Git ref to build"
+  - name: MAVEN_SNAPSHOT_REPO
+    required: true
+    description: "Maven repository where snapshots will be sourced"
+  - name: MAVEN_RELEASES_REPO
+    required: true
+    description: "Maven repository where releases will be sourced"
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -38,7 +44,7 @@ objects:
       sourceStrategy:
         env:
         - name: MAVEN_ARGS_APPEND
-          value: -pl etl --also-make
+          value: -pl etl --also-make -Dreleases.repo=${MAVEN_RELEASES_REPO} -Dsnapshots.repo=${MAVEN_SNAPSHOTS_REPO}
         - name: ARTIFACT_DIR
           value: etl/target/
         from:

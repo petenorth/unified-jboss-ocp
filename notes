@@ -9,10 +9,10 @@ oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/maste
 oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/refdataloader/pipeline/pipeline.yml -n cicd
 oc create -f https://raw.githubusercontent.com/petenorth/unified-jboss-ocp/master/jdgstats/pipeline/pipeline.yml -n cicd
 
-oc start-build etl
-oc start-build ingest
-oc start-build ref
-oc start-build stat
+oc start-build etlpipeline
+oc start-build ingestpipeline
+oc start-build refpipeline
+oc start-build statspipeline
 
 
 
