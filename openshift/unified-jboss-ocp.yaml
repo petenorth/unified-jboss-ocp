@@ -3,6 +3,13 @@ kind: Template
 metadata:
   creationTimestamp: null
   name: unified-jboss-ocp
+parameters:
+  - name: GIT_REPO
+    required: true
+    description: "Git repository, required"
+  - name: GIT_REF,
+    value: master
+    description: "Git ref to build"
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -14,13 +21,6 @@ objects:
       app: etl
       delete: appdev
     name: etl
-  parameters:
-    - name: GIT_REPO
-      required: true
-      description: "Git repository, required"
-    - name: GIT_REF,
-      value: master
-      description: "Git ref to build"
   spec:
     output:
       to:
