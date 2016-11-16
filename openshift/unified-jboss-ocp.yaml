@@ -14,6 +14,13 @@ objects:
       app: etl
       delete: appdev
     name: etl
+  parameters:
+    - name: GIT_REPO
+      required: true
+      description: "Git repository, required"
+    - name: GIT_REF,
+      value: master
+      description: "Git ref to build"
   spec:
     output:
       to:
@@ -24,8 +31,8 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: master
-        uri: https://github.com/petenorth/unified-jboss-ocp
+        ref: ${GIT_REF}
+        uri: ${GIT_REPO}
       type: Git
     strategy:
       sourceStrategy:
@@ -68,8 +75,8 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: master
-        uri: https://github.com/petenorth/unified-jboss-ocp
+        ref: ${GIT_REF}
+        uri: ${GIT_REPO}
       type: Git
     strategy:
       sourceStrategy:
@@ -112,8 +119,8 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: master
-        uri: https://github.com/petenorth/unified-jboss-ocp
+        ref: ${GIT_REF}
+        uri: ${GIT_REPO}
       type: Git
     strategy:
       sourceStrategy:
@@ -158,8 +165,8 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: master
-        uri: https://github.com/petenorth/unified-jboss-ocp
+        ref: ${GIT_REF}
+        uri: ${GIT_REPO}
       type: Git
     strategy:
       sourceStrategy:
