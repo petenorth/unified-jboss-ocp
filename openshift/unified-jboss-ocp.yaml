@@ -7,7 +7,7 @@ parameters:
   - name: GIT_REPO
     required: true
     description: "Git repository, required"
-  - name: GIT_REF,
+  - name: GIT_REF
     value: master
     description: "Git ref to build"
 objects:
