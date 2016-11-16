@@ -27,7 +27,7 @@ Create the Jenkins pipline builds in the cicd project
 
 The jenkins service account in the cicd project must have edit role on the jboss project
 
-  oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n jboss
+    oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n jboss
 
 Start the pipelines
 
