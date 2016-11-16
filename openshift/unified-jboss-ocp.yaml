@@ -10,7 +10,7 @@ parameters:
   - name: GIT_REF
     value: master
     description: "Git ref to build"
-  - name: MAVEN_SNAPSHOT_REPO
+  - name: MAVEN_SNAPSHOTS_REPO
     required: true
     description: "Maven repository where snapshots will be sourced"
   - name: MAVEN_RELEASES_REPO
