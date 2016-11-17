@@ -7,7 +7,7 @@ The auto-provisioning of Jenkins is not enabled by default (it is still 'Technol
     su - 
     vi /var/lib/openshift/openshift.local.config/master/master-config.yaml
 
-And then within this file edit the jenkinsPipelineConfig section so that autoProvisionEnabled is set to true. Add follow https://docs.openshift.com/container-platform/3.3/install_config/web_console_customization.html#web-console-enable-tech-preview-feature to enable the web console build pipeline navgation.
+And then within this file edit the jenkinsPipelineConfig section so that autoProvisionEnabled is set to true. Follow https://docs.openshift.com/container-platform/3.3/install_config/web_console_customization.html#web-console-enable-tech-preview-feature to enable the web console build pipeline navgation.
 
     vagrant halt
     vagrant up
